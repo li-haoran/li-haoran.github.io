@@ -3,17 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Something is Insteresting</title>
+  <title>hello world | Something is Insteresting</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Something is Insteresting">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="这是我的第一篇博客，just for fun!
+##自我介绍一下我比较感兴趣的是计算机视觉，模式识别啥的。现在跟风搞深度学习，还是一个菜鸟。关注物体检测和语义分割。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hello world">
+<meta property="og:url" content="http://yoursite.com/2016/05/05/hello-world/index.html">
 <meta property="og:site_name" content="Something is Insteresting">
-<meta property="og:description">
+<meta property="og:description" content="这是我的第一篇博客，just for fun!
+##自我介绍一下我比较感兴趣的是计算机视觉，模式识别啥的。现在跟风搞深度学习，还是一个菜鸟。关注物体检测和语义分割。">
+<meta property="og:updated_time" content="2016-05-05T01:23:07.333Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Something is Insteresting">
-<meta name="twitter:description">
+<meta name="twitter:title" content="hello world">
+<meta name="twitter:description" content="这是我的第一篇博客，just for fun!
+##自我介绍一下我比较感兴趣的是计算机视觉，模式识别啥的。现在跟风搞深度学习，还是一个菜鸟。关注物体检测和语义分割。">
   
     <link rel="alternate" href="/atom.xml" title="Something is Insteresting" type="application/atom+xml">
   
@@ -62,9 +66,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/05/05/hello-world/" class="article-date">
   <time datetime="2016-05-05T01:19:09.000Z" itemprop="datePublished">2016-05-05</time>
@@ -77,8 +79,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/05/hello-world/">hello world</a>
+    <h1 class="article-title" itemprop="name">
+      hello world
     </h1>
   
 
@@ -98,85 +100,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-testing" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/05/testing/" class="article-date">
-  <time datetime="2016-05-05T01:19:09.000Z" itemprop="datePublished">2016-05-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/05/testing/">testing</a>
-    </h1>
+    <a href="/2016/05/05/testing/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">testing</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/05/05/testing/" data-id="cintlzp660003ugu5kt6tpi9z" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-  
-    <article id="post-recently-work" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/05/recently-work/" class="article-date">
-  <time datetime="2016-05-05T01:10:09.000Z" itemprop="datePublished">2016-05-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/05/recently-work/">recently work</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>##motivation<br>最近主要集中在研究FCN，怎么有效的使得semantic segmentation这个任务变成一个端到端的训练过程。之前也有Deconv的网络，或者是CRFasRNN，还有一个*+CRF的工作。但是我觉得全卷积网络还是比较有吸引力的。</p>
-<p>那么问题来了，之前的Deconv的网络是一个sequential的级联过程，没有分支。现在的FCN是一个含有分支的网络，也就是说这种网络的好处是考虑了多尺度的特征，通过更小尺度的特征去优化分割结果。但是我们也看到了在最近的Deconv网络中，他们虽然是级联的网络，但是效果都比FCN好。当然这种前后对称的Deconv使用了大量的参数进行训练，这种大型的网络如果还加入了多尺度的信息，应该效果更好，但是这样的参数太多了。</p>
-<p>如果仅仅像FCN一样，我们怎样改进呢？考虑context信息应该是比较可行的一个过程。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/05/05/recently-work/" data-id="cintlzp620002ugu5nr4us61t" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 </section>
         
