@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="卷积神经网络,梯度下降," />
 
 
 
@@ -84,15 +84,19 @@
 
 
 
-<meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="VILab">
-<meta property="og:url" content="http://li-haoran.github.io/index.html">
+<meta name="description" content="Lenet5MNIST要说 Lenet ，那我们就不得不说说 MNIST  数据集。这个手写数字的数据集是非常常用的数据集之一了。在这个数据及上的手写数字识别的比赛，发展到目前已经算是基本解决了。但是发展的历程还是值得一看的。我们就看一下 LeCun  他的工作的历程吧。 LeCun  在这个数据集上尝试了很多的方法，从 1-layer neural network ， K-nearest nei">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CNN">
+<meta property="og:url" content="http://li-haoran.github.io/2016/06/23/CNN/index.html">
 <meta property="og:site_name" content="VILab">
-<meta property="og:description">
+<meta property="og:description" content="Lenet5MNIST要说 Lenet ，那我们就不得不说说 MNIST  数据集。这个手写数字的数据集是非常常用的数据集之一了。在这个数据及上的手写数字识别的比赛，发展到目前已经算是基本解决了。但是发展的历程还是值得一看的。我们就看一下 LeCun  他的工作的历程吧。 LeCun  在这个数据集上尝试了很多的方法，从 1-layer neural network ， K-nearest nei">
+<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/moti.jpg">
+<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/fr.jpg">
+<meta property="og:updated_time" content="2016-06-23T06:49:08.997Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="VILab">
-<meta name="twitter:description">
+<meta name="twitter:title" content="CNN">
+<meta name="twitter:description" content="Lenet5MNIST要说 Lenet ，那我们就不得不说说 MNIST  数据集。这个手写数字的数据集是非常常用的数据集之一了。在这个数据及上的手写数字识别的比赛，发展到目前已经算是基本解决了。但是发展的历程还是值得一看的。我们就看一下 LeCun  他的工作的历程吧。 LeCun  在这个数据集上尝试了很多的方法，从 1-layer neural network ， K-nearest nei">
+<meta name="twitter:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/moti.jpg">
 
 
 
@@ -113,9 +117,9 @@
 
 
 
-  <link rel="canonical" href="http://li-haoran.github.io/"/>
+  <link rel="canonical" href="http://li-haoran.github.io/2016/06/23/CNN/"/>
 
-  <title> VILab </title>
+  <title> CNN | VILab </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -136,9 +140,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -225,9 +227,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -247,10 +249,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/06/23/CNN/" itemprop="url">
-                  CNN
-                </a>
+                CNN
               
             
           </h1>
@@ -309,9 +308,7 @@
       
 
       
-        
-          
-            <h1 id="Lenet5"><a href="#Lenet5" class="headerlink" title="Lenet5"></a>Lenet5</h1><h2 id="MNIST"><a href="#MNIST" class="headerlink" title="MNIST"></a>MNIST</h2><p>要说 Lenet ，那我们就不得不说说 MNIST  数据集。这个手写数字的数据集是非常常用的数据集之一了。在这个数据及上的手写数字识别的比赛，发展到目前已经算是基本解决了。但是发展的历程还是值得一看的。我们就看一下 LeCun  他的工作的历程吧。 LeCun  在这个数据集上尝试了很多的方法，从 1-layer neural network ， K-nearest neighbors + Distance method  再到 PCA ， SVM ， Multi-layers neural network  最后提出了 Convolutional neural network 。 是一个很值得思考的过程，但是在每一分项中，他都没有达到最好的的成绩，有点前人栽树，后人乘凉的味道。</p>
+        <h1 id="Lenet5"><a href="#Lenet5" class="headerlink" title="Lenet5"></a>Lenet5</h1><h2 id="MNIST"><a href="#MNIST" class="headerlink" title="MNIST"></a>MNIST</h2><p>要说 Lenet ，那我们就不得不说说 MNIST  数据集。这个手写数字的数据集是非常常用的数据集之一了。在这个数据及上的手写数字识别的比赛，发展到目前已经算是基本解决了。但是发展的历程还是值得一看的。我们就看一下 LeCun  他的工作的历程吧。 LeCun  在这个数据集上尝试了很多的方法，从 1-layer neural network ， K-nearest neighbors + Distance method  再到 PCA ， SVM ， Multi-layers neural network  最后提出了 Convolutional neural network 。 是一个很值得思考的过程，但是在每一分项中，他都没有达到最好的的成绩，有点前人栽树，后人乘凉的味道。</p>
 <p>具体的数据集我就不再这里介绍了，感兴趣的可以去 LeCun 的主页上可以找到相关的信息。 LeCun 也是在这个模型上，完成了商用的首写数字识别系统，具体的可以参考 LeCun 98年发表的那个 Gradient-based learning applied to document recognition ，不过那篇文章是个 Sequential handwriting number recognition ，所以是在卷积神经网络前面接了一个 HMM  作为序列的分割和拼接。我们并不关注前端的 HMM ，我们这里只关注我们感兴趣的 CNN 。</p>
 <p>下面的章节我们主要参考的是<a href="http://deeplearning.net/tutorial/lenet.html" target="_blank" rel="external">这里</a>的教程，还有 Jake Bouvrie  的“ Notes on Convolutional Neural Networks<br>”。</p>
 <h2 id="motivation"><a href="#motivation" class="headerlink" title="motivation"></a>motivation</h2><p>卷积神经网络和之前的神经网络最大的区别，应该是有三点：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/moti.jpg" alt="motivation"></p>
@@ -466,148 +463,60 @@
 </tbody>
 </table>
 
-          
+      
+    </div>
+
+    <div>
+      
         
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-categories " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/06/22/intro/" itemprop="url">
-                  VILab简介
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-06-22T21:03:14+08:00" content="2016-06-22">
-              2016-06-22
-            </time>
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/简介/" itemprop="url" rel="index">
-                    <span itemprop="name">简介</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
+            <a href="/tags/卷积神经网络/" rel="tag">#卷积神经网络</a>
           
-
-          
-            
-          
-
-          
-
-          
-          
-
+            <a href="/tags/梯度下降/" rel="tag">#梯度下降</a>
           
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h2 id="实验室简介"><a href="#实验室简介" class="headerlink" title="实验室简介"></a>实验室简介</h2><h2 id="实验室成员"><a href="#实验室成员" class="headerlink" title="实验室成员"></a>实验室成员</h2>
-          
-        
-      
-    </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/22/intro/" rel="next" title="VILab简介">
+                <i class="fa fa-chevron-left"></i> VILab简介
+              </a>
+            
+          </div>
 
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -615,6 +524,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -634,8 +547,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/vilab.jpg"
@@ -685,6 +607,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Lenet5"><span class="nav-number">1.</span> <span class="nav-text">Lenet5</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MNIST"><span class="nav-number">1.1.</span> <span class="nav-text">MNIST</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#motivation"><span class="nav-number">1.2.</span> <span class="nav-text">motivation</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -781,6 +714,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
