@@ -248,6 +248,349 @@
             
               
                 
+                <a class="post-title-link" href="/2016/06/27/lr/" itemprop="url">
+                  lr
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-06-27T14:20:13+08:00" content="2016-06-27">
+              2016-06-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Tutorial/" itemprop="url" rel="index">
+                    <span itemprop="name">Tutorial</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="constrain"><a href="#constrain" class="headerlink" title="constrain"></a>constrain</h1><p>就像我们往常一样，我们这里从一个最实际的例子来进行切入。本文的行文主要是借鉴 Tibshirani 的 lasso 的那篇论文进行介绍的。</p>
+<p>回归问题在计算机视觉这个领域是非常非常重要的一个问题。对于一个实际应用的问题，如何设计 loss function 可以说是对问题很好的阐述。而我们最常使用的回归函数主要是：<br>（1）最小均方，<br>（2） logistic 回归。本文这里主要从最小均方误差进行切入。</p>
+<p>还有就是这里并不着重介绍如何去设计一个损失函数，这里主要是关注一个问题的约束项，也可以说是正则项。需要注意的是，这里要把约束和先验好好地区分一下。大致目的已经阐述完了，我们下面开始进入正题吧。</p>
+<h2 id="OLS估计"><a href="#OLS估计" class="headerlink" title="OLS估计"></a>OLS估计</h2><p> OLS 估计，也就是 ordinary least square 估计。为了很好的阐述这个问题，我们来定义一下这个问题吧。给定一个$Y$回归子（我们可以认为是数据的标签，或是待表示的数据），一个数据（或是一组基，码本，聚类中心等）$X$，我们需要最小化这个问题：<br>\begin{equation}\label{OLS}<br>\beta=argmin_\beta || Y - \beta X ||_F^2<br>\end{equation}</p>
+<p>这就是原始的最小均方估计的形式了，这个问题是有解析解的，这里我们使用$\beta^0$来表示。<br>\begin{equation}\label{beta0}<br>\beta^0=(X^T X)^{-1} Y X^T<br>\end{equation}</p>
+<p>但是问题不能简简单的就这么解决了，毕竟问题往往不像是看起来这么简单。</p>
+<p>第一个问题：<em>prediction accuracy</em>这里主要涉及的问题就很多了。首先是数据的问题，数据很可能是一个非常相关的（可以说是低秩的），还有就是噪声的问题。还有就是 OLS 通常具有很小的偏置却又很大的方差，也就是我们所说的 overfitting 。</p>
+<p>第二个问题：<em>interpretation</em>问题学习到的参数通常是 dense 的，就是说，一个回归子需要很多参数的作用，这样就很难解释到底是在这个问题中起到更重要的作用。利用我们的直觉，我们一般也会认为只有少量的变量才会起到很重要的作用。</p>
+<h2 id="before-lasso"><a href="#before-lasso" class="headerlink" title="before lasso"></a>before lasso</h2><p>根据这些问题，前人做了一些列的改进，还有一些问题的重新阐述，定义。下面我们先介绍 lasso 诞生之前的一些解决方案：<br>（1）<em>subset selection</em><br>（2）<em>ridge regression</em><br>（3）<em>non negative garotte</em></p>
+<h3 id="subset-selection"><a href="#subset-selection" class="headerlink" title="subset selection"></a>subset selection</h3><p>这个问题来源于矩阵的表示：怎么用原始矩阵中的一些列来表示原来的矩阵，使得误差最小。下面我们用公式可以表示为：<br>\begin{equation}\label{ss}<br>A \prod = (A_1 A_2)<br>\end{equation}</p>
+<p>这里的$\prod$是一个置换矩阵，什么意思呢？就是说，我们从原始矩阵中选取一些列组合成矩阵$A_1$，剩下的组合成矩阵$A_2$。然后我们最小化函数：<br>\begin{equation}\label{ss2}<br>|| A_1 z - A_2 ||_F^2<br>\end{equation}</p>
+<p>这里我还没有看完就不细说了，不过这个通过数据本身的特性，来进行数据的选取，可以用来 unsupervised feature selection 。</p>
+<p>但是这个算法还是存在很多问题的： subset selection 很好的的为模型提供了解释性，但是由于是知识从原来的矩阵选取一个一些列，也就是扔掉一些列，这即使得选取的过程造成这个模型的不鲁棒，同时还降低了预测精度。</p>
+<h3 id="ridge-regression"><a href="#ridge-regression" class="headerlink" title="ridge regression"></a>ridge regression</h3><p>这个使我们最熟悉不过的东西了，几乎可以说是无处不在。这个在避免模型过拟合时，最常使用了。那我们就来看看为什么这个会避免过拟合。根据我的习惯，我们还是从函数来看：<br>\begin{equation}<br>\begin{split}\label{ridre}<br>\beta &amp;= argmin_\beta  ||Y - \beta X ||_F^2\\<br>&amp;subject to:\sum ||\beta_j || \leq t<br>\end{split}<br>\end{equation}<br>一般我们还会写作：<br>\begin{equation}\label{rigre2}<br>\beta = argmin_\beta  ||Y - \beta X ||_F^2 + \lambda || \beta ||<br>\end{equation}</p>
+<p>如果我们使用拉格朗日乘子法，可以发现这两问题是等价的，但是这里肯定是在$t$在某个条件下等价的，这里就不在这里一一赘述了。</p>
+<p> PS ：为了表示方面我们这里假设$X$矩阵是规范正交矩阵，也就是说$X^T X = I$对于实际中，这个也是能获取的，例如降维的时候，我们使用 PCA 获取的就是正交基。也就是说之前的$$\beta^0 = Y X^T $$。</p>
+<p>那么经过二范数的约束的岭回归的解和原来的 OLS 的解之间有什么关系呢？下面我们给出 Tibshirani 给出的结果：<br>\begin{equation}\label{ridge-ols}<br>\beta^2_j=\left( \frac{1}{1+\lambda}\right)\beta^0<br>\end{equation}</p>
+<p>如下图：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/ridge.jpg" alt="ridge"></p>
+<blockquote>
+<p>The parameters in ridge regression is linearly scaling the OLS</p>
+</blockquote>
+<p>我们可以看到这个问题对参数有了很好的抑制，但是这里的参数还是很 dense 的，因为这里实现了一个缩放的功能，还是不能提供一个很 easily 的解释性。</p>
+<h3 id="non-negative-garotte"><a href="#non-negative-garotte" class="headerlink" title="non negative garotte"></a>non negative garotte</h3><p>这也是比较陌生的东西，因为这个比一般的回归多了一些参数，估计这也是不受大众欢迎的原因吧。那这个东西就近是什么东西呢。来看一下定义吧。<br>\begin{equation}<br>\begin{split}\label{garotte}<br>\beta &amp;= argmin_\beta  ||Y - C \beta^0 X ||_F^2\\<br>&amp;subject to:C_j \geq 0    \sum C_j \leq t<br>\end{split}<br>\end{equation}</p>
+<p>这里可以看做是对原有的参数的一些缩放，这里可以起到一些参数的抑制的作用。那这里的参数和之前的参数有什么关系呢？</p>
+<p>\begin{equation}\label{ridgess-ols}<br>\beta^g_j=\left( 1-\frac{\lambda}{||\beta^0||}\right)^+\beta^0<br>\end{equation}</p>
+<p>如下图：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/garotte.jpg" alt="crf"></p>
+<blockquote>
+<p>The parameters in garotte regression is nonlinearly scaling the OLS</p>
+</blockquote>
+<p>这个抑制已经很接近 lasso ，那我们来看看最后，但是由于这个$C$即取决于原始参数的方向，还取决于其大小，这样的结果是不是很理想的。</p>
+<h2 id="lasso"><a href="#lasso" class="headerlink" title="lasso"></a>lasso</h2><p> lasso 其实是 least absolute shrinkage and selection operator 。就是字面意思了。问题可以简单的定义为：<br>\begin{equation}<br>\begin{split}\label{lassoeq}<br>\beta &amp;= argmin_\beta  ||Y - \beta X ||_F^2\\<br>&amp;subject to:\sum |\beta_j | \leq t<br>\end{split}<br>\end{equation}</p>
+<p>这里的参数和之前的参数有什么关系呢？<br>\begin{equation}\label{l-ols}<br>\beta^l=sign(\beta^0)(|\beta^0|-\lambda)^+<br>\end{equation}</p>
+<p>如图所示：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/lasso.jpg" alt="lasso"></p>
+<blockquote>
+<p>The parameters in lasso regression is nonlinearly scaling the OLS</p>
+</blockquote>
+<p>这个就可以很容易的看出这个这个的抑制效果比之前的几种方法都好。</p>
+<p>下面我们来证明一下这个$\beta^1$和$\beta^0$之间的关系。由于一范数存在没有单数的点，所以这里我们要给出几个定义。</p>
+<blockquote>
+<p><strong>Definition.1</strong> （subgradient;subdifferential）对于在$p$ 维欧式空间中的凸开子集$\mathcal{U}$上定义的实值函数$f:\mathcal{U}\rightarrow \mathbb{R}$，一个$p$ 维向量$v$称为$f$在点$x_0 \in \mathcal{U}$处的$subgradient$，对于任意的$x \in \mathcal{U}$，满足：<br>$$ f(x) - f(x_0) \geq v \cdot (x- x_0)$$<br>由在点$x_0$出所在的$subgradient$所组成的集合称为$x_0$处的$subdifferential$，记作$\partial f(x_0)$。</p>
+</blockquote>
+<p>这里我们讨论的是凸函数，一范数的情况下，我们来看一个简单地一维的情况$f(x)=|x|$，在$x=0$这个点的$subgradient$在$[-1,+1]$这个区间里。</p>
+<p>根据这个概念，我们来定义一个全局最优的新定义：</p>
+<blockquote>
+<p><strong>Definition.2</strong>（condition for global minimizer）点$x_0$是凸函数$f$的一个全局最小点，当且仅当$0 \in \partial f(x_0)$。</p>
+</blockquote>
+<p>既然做了这么多的铺垫，那我们就开始我们的证明。</p>
+<p>首先我们来回忆一下我们的在最小二乘的时候的解是$\beta^0=Y X^T$。由于是一范数我们来分情况证明这个问题吧：</p>
+<p>（1）$gradient$存在，也就是说这一点$\overline{\beta}_j \neq 0$:</p>
+<p>\begin{equation}\label{r1}<br>\frac{\partial f(x_0)}{\partial  \beta_j} \big |_{\overline{\beta}_j}=0<br>\end{equation}</p>
+<p>也就是说：</p>
+<p>\begin{equation}\label{r2}<br>-2(Y X^T - X^T X \overline{\beta})_j+\lambda sign(\overline{\beta}_j)=0<br>\end{equation}</p>
+<p>然后根据我们之前的正交化的工作，我们可以得到：</p>
+<p>\begin{equation}\label{r3}<br>\overline{\beta}_j=\beta_j^0-\frac{\lambda}{2}sign(\overline{\beta}_j)<br>\end{equation}</p>
+<p>根据这个公式，我们可以很容易的证明一个现象，那就是$\overline{\beta}_j$和$\beta_j^0$是同号的。也就是说：</p>
+<p>\begin{equation}\label{r4}<br>\overline{\beta}_j=sign(\beta_j^0)\left(|\beta_j^0|-\frac{\lambda}{2}\right)=sign(\beta_j^0)|\overline{\beta}_j|<br>\end{equation}</p>
+<p>然后呢，我们就可以得到一个很直观的结果：</p>
+<p>\begin{equation}\label{r5}<br>  |\beta_j^0|-\frac{\lambda}{2}=|\overline{\beta_j^0}| \geq 0<br>\end{equation}</p>
+<p>所以呢，在梯度存在的情况下，我们得到的是这样的的结果：</p>
+<p>\begin{equation}\label{r6}<br>\overline{\beta}_j=sign(\beta_j^0)\left( |\beta_j^0 | -\frac{\lambda}{2} \right)_+<br>\end{equation}</p>
+<p>（2）$gradient$不存在，这个时候$\overline{\beta}_j=0$：</p>
+<p>这个时候我们就可以用到我们之前的那两个定义了：<br>\begin{equation}\label{rr6}<br>\begin{split}<br>  0&amp;=\overline{\beta}_j=\partial f(x_0)={-2(Y X^T -X^T X \overline{\beta})_j+\lambda e:e \in[-1,+1]}\\<br>  &amp;={2\overline{\beta}_j-2\beta_j^0+\lambda e:e\in[-1,+1]}<br>\end{split}<br>\end{equation}</p>
+<p>然后我们还知道$\overline{\beta}_j=0$，<br>于是乎：</p>
+<p>\begin{equation}\label{r7}<br>  |\beta_j^0|=\frac{\lambda}{2}|e_0| \leq \frac{\lambda}{2}     e_0\in[-1,+1]<br>\end{equation}</p>
+<p>然后我们把这两部分统一起来就得到了上面我们我们的所画的图。</p>
+<h2 id="Norm-ball"><a href="#Norm-ball" class="headerlink" title="Norm ball"></a>Norm ball</h2><p>下面我们用一个很直观的形式来讲解这些之间的问题。那就是 Donoho 大牛提出了一个很有趣的东西： Norm ball 。其实就是范数的等高线。那我们就来看看这个等高线到底长什么样子呢？<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/nb.jpg" alt="norm ball"></p>
+<blockquote>
+<p>L4,L2,L1,L0.5 Norm ball</p>
+</blockquote>
+<p> Donoho 给了我们一个直观的方式去选着我们需要的约束，为什么这个说，如果我们在这里显式的给出能量函数的等高线，就会一目了然了。我在这里就简要介绍这些问题吧。但是我们通过观测得到一些结论</p>
+<p> L1 和 L0.5 范数的图像是<em>具有“尖”的，而且这些“尖”位于坐标轴上</em>，也就是说具有这种性质的是具有稀疏性约束的。$[0,1]$之间的范数都具有稀疏性，现在也有人在研究这些范数，这里就不一一给出了。</p>
+<p> L2 范数是不具有上面的性质的，因为这个 Norm ball 是极致光滑的，用一个很形象的描述就是<em>这个范数不偏向任何一方，各个分量的比值只和能量函数的中心有关</em>。</p>
+<p>还有就是 L4 范数，这个范数可以看到和 L1 范数有个可以说是相反的约束，<em>这个范数更希望这个分量是均匀，也就是每一个分量尽可能的差不多</em>。</p>
+<p> PS： 这里我就不列文献了$&gt;. &lt;$。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/06/27/rbm/" itemprop="url">
+                  rbm
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-06-27T13:59:49+08:00" content="2016-06-27">
+              2016-06-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Tutorial/" itemprop="url" rel="index">
+                    <span itemprop="name">Tutorial</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="RBM"><a href="#RBM" class="headerlink" title="RBM"></a>RBM</h1><p> RBM 也就是 Restricted Boltzmann Machine ，这个概念由来已久了。我是在《人工神经网络》课上对这个有了一些了解。这个问题之前我知道，是来源于 DBN 的 pretrain 和 DBMs 。在深度学习中， RBM 可以说是具有很强的推动作用，记得上《模式识别》课时，老师在讲到深度神经网络使用 BP 算法的时候出现 Gradient vanish ，导致深度的网络是无法训练的， RBM 的可以说是作为训练 DBN 的救世主的形象出现的，通过 RBM 进行 pretrain 可以有效的解决 Gradient vanish 的问题。所以说这个 RBM 是个很重要的概念，那我们来看看这个东西吧。</p>
+<h2 id="Structure"><a href="#Structure" class="headerlink" title="Structure"></a>Structure</h2><p><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/rbm.jpg" alt="crf"></p>
+<blockquote>
+<p>RBM structure</p>
+</blockquote>
+<p>玻尔兹曼机是一个双层的，层间是一个全连的结构，层内也是全连的结构，但是这个是一个很复杂的结构。秉着简化模型的理念，就出现了限制玻尔兹曼机，限制就是去掉层内部的链接，简化了之后的模型看起来就很想我们常见的神经网络的模型。如上图所示，我们可以看出这个结构和我们所接触的前馈的神经网络还是有所不同的，因为层间的链接是一个无向边，也就是说这是一个对传的网络结构。</p>
+<p>我认为去掉层内之间的链接，就使得，这个模型不在 model 一个观测里面各个特征之间的关系，而是 model 观测和观测之间的关系，所以这个模型可以看作是无监督的特征的提取。</p>
+<p>但是我们还有走的稍微深入一点，来追根溯源一下，这个模型本来是来自什么地方呢。</p>
+<h2 id="Dynamic-system"><a href="#Dynamic-system" class="headerlink" title="Dynamic system"></a>Dynamic system</h2><p>这个问题可以追溯到动态系统那个地方去，为什么这么说呢？其实我也不知道，《人工神经网络》课上老师告诉我的。所以我们就用动态系统，或者暂时把自己当做是控制系的学生来看看这个问题吧。</p>
+<p>第一个重要的理论是 lyapunov function ，这个函数可以说是动态系统的一个最重要的指标了。为什么这么说呢？因为这个函数定义了一个动态系统稳定的条件。下面我们就来看看到底是怎么定义的吧。</p>
+<p>对于一个动态系统，我们都可以定义一个能量函数$\mathcal{U}$，如果一个系统：<br>$$\frac{\partial \mathcal{U}}{ \partial t } \leq 0$$</p>
+<p>我们就说这个系统是稳定的，也就是说在经过一段时间后这个是同会收敛到稳定状态。这里需要注意的是这里的是能量函数对时间的导数，这里描述的是一个动态的变化的量之间的关系。</p>
+<p>但是我们要用我们机器学习的观点来看这个问题，一般我们搞出一个模型，是必要伴随着参数学习的过程。也就是说，我们的模型变化的是参数，是参数在随着时间在变化，那我们怎么把上面的问题迁移到我们的问题上呢？数学上对这个已经有很好的办法了那就是链式求导法：<br>$$\frac{\partial \mathcal{U}}{ \partial t } =\frac{\partial \mathcal{U}}{ \partial \omega } \frac{\partial \omega}{ \partial t } \leq 0  $$。</p>
+<p>这样我们就很好的对应到我们学习的过程中了，$\frac{\partial \mathcal{U}}{ \partial \omega }$是我们设计的能量函数对参数的固有导数，$\frac{\partial \omega}{ \partial t }$是我们学习过程中参数的变化过程。</p>
+<p>知道了这么多了，我们来 specialized 这个模型到 RBM 。</p>
+<h2 id="Prove-the-stability-of-RBM"><a href="#Prove-the-stability-of-RBM" class="headerlink" title="Prove the stability of RBM"></a>Prove the stability of RBM</h2><p>第一步，我们来定义 RBM 的能量函数：<br>$$\mathcal{U}=-\sum_{j \in \mathbb{V}}a_j v_j - \sum_{i \in \mathbb{H}} b_i h_i -\sum_{i \in \mathbb{H},j \in \mathbb{V}}v_j w_{ji} h_i$$</p>
+<p>下面我们就来 证明这个系统的稳定性。 PS ：这里用到的参数更新的公式来至于 Hinton 老爷子关于 RBM 的文章。</p>
+<p>（1）让我们来看第一个参数$b$:<br>\begin{equation}\label{st}<br>  \begin{split}<br>   \frac{\partial \mathcal{U}}{ \partial a_j } &amp; =-v_j^k \<br>    \frac{\partial a_j}{ \partial t }  &amp; =v_j^k-v_j^{k+1}\<br>    \frac{\partial \mathcal{U}}{ \partial t } &amp; = \frac{\partial \mathcal{U}}{ \partial a_j } \frac{\partial a_j}{ \partial t }<br>        =-v_j^k(v_j^k-v_j^{k+1})<br>  \end{split}<br>\end{equation}</p>
+<p>那我们就讨论一下这个东西到底是不是小于等于0的。首先需要知道的是这个网络是二值的网络，也就是说 v,h 的取值是在 { 1,0} 的。所以：</p>
+<p>1.$v_j^k=0$，这个我们可以很轻松的得到：</p>
+<p>$$\frac{\partial \mathcal{U}}{ \partial t } =\frac{\partial \mathcal{U}}{ \partial a_j } \frac{\partial a_j}{ \partial t }=0(0-v_j^{k+1})=0 \leq 0$$</p>
+<p>2.$v_j^k=1$，然后，无论$v_j^{k+1}$取什么值，$v_j^k-v_j^{k+1} \geq 0$，同样我们也就知道了：</p>
+<p>$$\frac{\partial \mathcal{U}}{ \partial t } =\frac{\partial \mathcal{U}}{ \partial a_j } \frac{\partial a_j}{ \partial t }=-1(v_j^k-v_j^{k+1}) \leq 0$$</p>
+<p>同理，我们可以证明$\frac{\partial \mathcal{U}}{ \partial b_j } \frac{\partial b_j}{ \partial t }$和$\frac{\partial \mathcal{U}}{ \partial w_{ji} } \frac{\partial w_{ji}}{ \partial t }$都是满足之前我们定义的稳定性的条件的。</p>
+<p>既然我们知道了这个系统的稳定性了，那我们就转换一下身份吧，不要再用动态系统的观点来看这个问题了。下面我们将从概率的角度来看这个问题。</p>
+<h2 id="Why-it-call-Boltzmann"><a href="#Why-it-call-Boltzmann" class="headerlink" title="Why it call Boltzmann?"></a>Why it call Boltzmann?</h2><p>这个我记得，我上物理课的时候，听说了波尔兹曼分布这个东西。感觉就是一个和一个系统的能量有关的概率问题。那我们就定义一下在这里的概率分布：<br>\begin{equation}\label{blz}<br>  P(v,h)=\frac{1}{\mathcal{Z}} e^{-\mathcal{U}}<br>\end{equation}</p>
+<p>由于这里涉及的是概率的问题，所以毫无疑问是要归一化的$\mathcal{Z}$就是归一化因子。<br>\begin{equation}\label{zz}<br>  \mathcal{Z}=\sum_{v,h}e^{-\mathcal{U}}<br>\end{equation}</p>
+<p>用概率的观点来看问题，一切就变得奇怪起来了。以前，我们知道了$v$就可以根据非线性变换就可以得到$h$了，但是现在不是这样了，我们根据概率$P(h=1 \mid v)$来得到$h$。所以我就说，一切变得奇怪起来了。</p>
+<p>既然是要按照一定的概率来更新，那我们就得知道这个概率到底是什么呢？好吗，那我们来推导一下：<br>\begin{equation}\label{w3}<br>  \begin{split}<br>     P(h_i=1 \mid v)<br>       &amp;= P(h_i=1 \mid h_{-i},v) \\<br>       &amp; =\frac{P(h_i=1 , h_{-i},v)}{P(h_{-i},v)}\\<br>       &amp;=\frac{P(h_i=1 , h_{-i},v)}{P(h_i=1 , h_{-i},v) + P(h_i=0 , h_{-i},v)}\\<br>       &amp;=\frac{\frac{1}{\mathcal{Z}}e^{\mathcal{H}_{-i} +(b_i+\sum_j v_j w_{ji})}}<br>       {\frac{1}{\mathcal{Z}}e^{ \mathcal{H}_{-i}+(b_i+\sum_j v_j w_{ji})}+\frac{1}{\mathcal{Z}}e^{ \mathcal{H}_{-i}+0}}\\<br>       &amp;=\frac{1}{1+e^{-(b_i+\sum_j v_j w_{ji})}}\\<br>       &amp;=sigmoid(b_i+\sum_j v_j w_{ji})<br>   \end{split}<br>\end{equation}</p>
+<p>其中：<br>\begin{equation}\label{w5}<br>  \mathcal{H}_{-i}=\sum_{j \in \mathbb{V}}a_j v_j + \sum_{i \in \mathbb{H}-h_i} b_i h_i +\sum_{i \in \mathbb{H}-h_i,j \in \mathbb{V}}v_j w_{ji} h_i<br>\end{equation}</p>
+<p>同理可证：<br>\begin{equation}\label{w4}<br>  P(v_j=1 \mid h)=sigmoid(a_j + \sum_i w_{ji}h_i)<br>\end{equation}</p>
+<p>写了这么多，感觉跟饶了一大圈又回到了原点一样。多眼熟的 sigmoid 函数，但是在这里是不一样的，这里是不一样的，这里的输出不是 sigmoid 的输出，这里的 sigmoid 代表的是输出为1的概率，输出到底是什么呢？这样牵扯概率的更新，一下子就与众不同了。</p>
+<h2 id="Loss-function"><a href="#Loss-function" class="headerlink" title="Loss function"></a>Loss function</h2><p>但是我们这里并不是关注的礼盒概率分布$P(v,h)$，我们关注的是$P(v)$这个边缘概率分布，换句话说，这个$P(v)$才是我们的 Loss function 。我们在这就不证明了，直接给我结果：<br>\begin{equation}\label{7}<br>  P(v)=\sum_h P(v,h)=\frac{1}{\mathcal{Z}} \prod_{j \in \mathbb{V}}e^{a_j v_j} \prod_{i \in \mathbb{H}}(1+e^{b_i + \sum_{j \in \mathbb{V}}v_j w_{ji}})<br>\end{equation}</p>
+<p>但是我们并不喜欢这样连乘的损失函数，我们希望是求和式，这里就对$P(v)$取对数：<br>\begin{equation}\label{8}<br>  \mathcal{L}(\omega)=\ln P(v) =\sum_{j \in \mathbb{V}} e^{a_j v_j} + \sum_{i \in \mathbb{H}} \ln(1 + e^{b_i + \sum_{j \in \mathbb{V}} v_j w_{ji}})-\ln (\mathcal{Z})<br>\end{equation}</p>
+<p>根据梯度下降法：<br>$$\omega^k =\omega^{k-1}+ \eta\frac{\partial \mathcal{L}(\omega)}{\partial \omega}$$</p>
+<p>我们就可以得到我们想要的各个参数的梯度变化值，这里就不一一证明了：<br>\begin{equation}\label{9}<br>  \frac{\partial \mathcal{L}(\omega)}{\partial w_{ji}}=P(h_i=1 \mid v)v_j-\sum_{j \in \mathbb{V}} P(v)P(h_i=1 \mid v) v_j<br>\end{equation}</p>
+<p>\begin{equation}\label{l9}<br>  \frac{\partial \mathcal{L}(\omega)}{\partial a_j}=v_j-\sum_{j \in \mathbb{V}} P(v) v_j<br>\end{equation}</p>
+<p>\begin{equation}\label{l99}<br>  \frac{\partial \mathcal{L}(\omega)}{\partial b_i}=P(h_i=1 \mid v)-\sum_{j \in \mathbb{V}} P(v)P(h_i=1 \mid v)<br>\end{equation}</p>
+<p>看到这个梯度我们就可以使用梯度下降法来进行学习了，但是麻烦的问题来了这个梯度里面有一个$\sum\limits_{j \in \mathbb{V}}$这一项，显然对于我们来说，这个是不好计算的，因为我们不知道$v$的分布。那怎么办呢？运用很直观的办法，那就是$MCMC$采样来进行估计，但是这里收敛速度是十分重要的，因为$MCMC$可能在很多步的转移之后才会$burn in$。<br>怎么才能得到更加有效的算法呢？<em>我们使用 RBM 去拟合训练数据的分布，那我们是不是可以以训练数据为起点，这样可以更好的达到 RBM 的分布。</em></p>
+<p>基于这个想法，咱们还是来看 Hinton 老爷子的 contrast divergence 算法吧！</p>
+<h2 id="Contrast-Divergence"><a href="#Contrast-Divergence" class="headerlink" title="Contrast Divergence"></a>Contrast Divergence</h2><p>这就是大名鼎鼎的 CD 算法了！这里基于之前的假设，以样本$v^0$为初始点,然后在使用 Gibbs  采样$k$ 次得到$v^k$，最后之前的公式就变成了：</p>
+<p>\begin{equation}\label{10}<br>  \frac{\partial \mathcal{L}(\omega)}{\partial w_{ji}} \approx P(h_i=1 \mid v^0)v_j^0- P(h_i=1 \mid v^k) v_j^k<br>\end{equation}</p>
+<p>\begin{equation}\label{11}<br>  \frac{\partial \mathcal{L}(\omega)}{\partial a_j} \approx  v_j^0- v_j^k<br>\end{equation}</p>
+<p>\begin{equation}\label{12}<br>  \frac{\partial \mathcal{L}(\omega)}{\partial b_i}\approx P(h_i=1 \mid v^0)-P(h_i=1 \mid v^k)<br>\end{equation}</p>
+<p>然后一切就迎刃而解了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">\begin&#123;algorithm&#125;</span><br><span class="line">    \caption&#123;Contrast Divergence&#125;</span><br><span class="line">    \begin&#123;algorithmic&#125;[1] %每行显示行号</span><br><span class="line">        \Require k,s,RBM(w,a,b)</span><br><span class="line">        \Ensure $\Delta w,\Delta a ,\Delta b$</span><br><span class="line">        \State initialized:$\Delta w=0,\Delta a=0 ,\Delta b=0$</span><br><span class="line">        \Function &#123;GetGradient&#125;&#123;$\Delta w,\Delta a ,\Delta b$&#125;</span><br><span class="line">          \While&#123;$v \in \mathbb&#123;V&#125;$ &#125;</span><br><span class="line">            \State $v^0=v$</span><br><span class="line">            \While&#123;$t \in \&#123;0,1...k-1\&#125;$&#125;</span><br><span class="line">                \State $h^t = $ \Call&#123;sample\\_h\\_given\\_v&#125;&#123;$v^t,RBM(w,a,b)$&#125;</span><br><span class="line">                \State $v^&#123;t+1&#125;=$ \Call&#123;sample\\_v\\_given\\_h&#125;&#123;$h^t,RBM(w,a,b)$&#125;</span><br><span class="line">            \EndWhile</span><br><span class="line"></span><br><span class="line">            \While&#123;$i \in \mathbb&#123;H&#125;,j \in \mathbb&#123;V&#125;$&#125;</span><br><span class="line">                \State $\Delta w\_&#123;ji&#125;=\Delta w\_&#123;ji&#125;+[P(h\_i=1 \mid v^0) v\_j^0-P(h\_i=1 \mid v^k) v\_j^k]$</span><br><span class="line">                \State $\Delta a\_j =\Delta a\_j +[v\_j^0-v\_j^k]$</span><br><span class="line">                \State $\Delta b\_i= \Delta b\_i + [P(h\_i=1 \mid v^0)-P(h\_i=1 \mid v^k)]$</span><br><span class="line">            \EndWhile</span><br><span class="line">           \EndWhile</span><br><span class="line">          \EndFunction</span><br><span class="line"></span><br><span class="line">        \Function&#123;sample\\_h\\_given\\_v&#125;&#123;$v,RBM(w,a,b)$&#125;</span><br><span class="line">            \While&#123;$i \in \mathbb&#123;H&#125;$&#125;</span><br><span class="line">                \State $Produce a random r\_i \in [0,1]$</span><br><span class="line">                \If&#123;$P\_i^v &gt; r\_i$&#125;</span><br><span class="line">                    \State $h\_i=1$</span><br><span class="line">                \Else</span><br><span class="line">                    \State $h\_i=0$</span><br><span class="line">                \EndIf</span><br><span class="line">            \EndWhile</span><br><span class="line">        \EndFunction</span><br><span class="line">        \Function&#123;sample\\_v\\_given\\_h&#125;&#123;$h,RBM(w,a,b)$&#125;</span><br><span class="line">                      \While&#123;$j \in \mathbb&#123;V&#125;$&#125;</span><br><span class="line">                \State $Produce a random r\_j \in [0,1]$</span><br><span class="line">                \If&#123;$P\_j^h &gt; r\_j$&#125;</span><br><span class="line">                    \State $v\_j=1$</span><br><span class="line">                \Else</span><br><span class="line">                    \State $v\_j=0$</span><br><span class="line">                \EndIf</span><br><span class="line">            \EndWhile</span><br><span class="line">        \EndFunction</span><br><span class="line"></span><br><span class="line">    \end&#123;algorithmic&#125;</span><br><span class="line">\end&#123;algorithm&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/06/24/CRF/" itemprop="url">
                   CRF
                 </a>
@@ -1004,7 +1347,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">5</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1021,7 +1364,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
