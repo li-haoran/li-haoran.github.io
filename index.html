@@ -87,7 +87,7 @@
 <meta name="description">
 <meta property="og:type" content="website">
 <meta property="og:title" content="VILab">
-<meta property="og:url" content="http://li-haoran.github.io/index.html">
+<meta property="og:url" content="https://li-haoran.github.io/index.html">
 <meta property="og:site_name" content="VILab">
 <meta property="og:description">
 <meta name="twitter:card" content="summary">
@@ -104,8 +104,8 @@
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: 0,
-      author: '博主'
+      userId: 6326655141193713000,
+      author: 'Author'
     }
   };
 </script>
@@ -113,7 +113,7 @@
 
 
 
-  <link rel="canonical" href="http://li-haoran.github.io/"/>
+  <link rel="canonical" href="https://li-haoran.github.io/"/>
 
   <title> VILab </title>
 </head>
@@ -812,9 +812,11 @@
 <blockquote>
 <p>-</p>
 </blockquote>
-<p>但是这个参数化之后，看着还是满复杂的，我们想把那两个项简化成一个同一的表达形式，以便于后面的理解。我们这里首先来同一符号，之前的特征函数我们这里都是用 $f_k$ 表示，那么这里的特征函数的个数就是之前的和 $K=K_1+K_2$ ：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">\begin&#123;equation&#125;\label&#123;fddtd&#125;</span><br><span class="line">  f\_k(y\_&#123;i-1&#125;,y\_i,x,i)=</span><br><span class="line">   \begin&#123;cases&#125;</span><br><span class="line">    t\_k(y\_&#123;i-1&#125;,y\_i,x,i),&amp;k=1,2,...,K\_1 \\\\</span><br><span class="line">    s\_l(y\_i,x,i), &amp; k=K\_1+l;l=1,2...,K\_2</span><br><span class="line">  \end&#123;cases&#125;</span><br><span class="line">  </span><br><span class="line">\end&#123;equation&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是这个参数化之后，看着还是满复杂的，我们想把那两个项简化成一个同一的表达形式，以便于后面的理解。我们这里首先来同一符号，之前的特征函数我们这里都是用 $f_k$ 表示，那么这里的特征函数的个数就是之前的和 $K=K_1+K_2$ ：</p>
+<p>\begin{equation}\label{fddtd}<br>  f_k(y_{i-1},y_i,x,i)=<br>   \begin{cases}<br>    t_k(y_{i-1},y_i,x,i),&amp;k=1,2,…,K_1 \\<br>    s_l(y_i,x,i), &amp; k=K_1+l;l=1,2…,K_2<br>  \end{cases}<br>\end{equation}</p>
 <p>之前我们也看到，参数只和特征函数函数的个数有关，和参数的个数是没有关系的，而且我们关心的也是求和之后的结果，所以我们可以先对特征函数求和：<br>\begin{equation}\label{f}<br>  f_k(y,x)=\sum_{i=1}^nf_k(y_{i-1},y_i,x,i),k=1,2,…,K<br>\end{equation}</p>
-<p>这样这个特征函数就可以写成一个列向量的形式了，参数同样也可以写成列向量的形式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">\begin&#123;equation&#125;\label&#123;wttk&#125;</span><br><span class="line">  w\_k=</span><br><span class="line">   \begin&#123;cases&#125;</span><br><span class="line">    \lambda\_k, &amp;k=1,2,...,K\_1 \\\\</span><br><span class="line">    \mu\_l, &amp;k=K\_1+l;l=1,2...,K\_2</span><br><span class="line">  \end&#123;cases&#125;</span><br><span class="line">  </span><br><span class="line">\end&#123;equation&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样这个特征函数就可以写成一个列向量的形式了，参数同样也可以写成列向量的形式：</p>
+<p>\begin{equation}\label{wttk}<br>  w_k=<br>   \begin{cases}<br>    \lambda_k, &amp;k=1,2,…,K_1 \\<br>    \mu_l, &amp;k=K_1+l;l=1,2…,K_2<br>  \end{cases}<br>\end{equation}</p>
 <p>然后我们用列向量来表示特征值和参数：<br>  $$w=(w_1,w_2,…,w_K)^T$$<br>  $$F(y,x)=(f_1(y,x),f_2(y,x),…,f_K(y,x))$$  </p>
 <p>写成了向量的形式，计算起来就很简单了，下面我们给出之前的公式一个向量形式的表示：<br>\begin{equation}\label{fw}<br>  p_w(y \mid x)=\frac{1}{\mathcal{Z}_w(x)} \exp (w \cdot F(y,x))<br>\end{equation}</p>
 <p>\begin{equation}\label{ftw}<br> \mathcal{Z}_w(x)=\sum_y \exp (w \cdot F(y,x))<br>\end{equation}</p>
@@ -1526,6 +1528,9 @@
   
 
   
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
 
 </body>
 </html>
