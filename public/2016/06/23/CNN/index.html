@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Lenet5MNIST要说 Lenet ，那我们就不得不说说 MNIST  数据集。这个手写数字的数据集是非常常用的数据集之一了。在这个数据及上的手写数字识别的比赛，发展到目前已经算是基本解决了。但是发展的历程还是值得一看的。我们就看一下 LeCun  他的工作的历程吧。 LeCun  在这个数据集上尝试了很多的方法，从 1-layer neural network ， K-nearest nei">
+<meta name="keywords" content="卷积神经网络,梯度下降">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CNN">
+<meta property="og:url" content="https://li-haoran.github.io/2016/06/23/CNN/index.html">
+<meta property="og:site_name" content="Haoran LI&#39;s blog">
+<meta property="og:description" content="Lenet5MNIST要说 Lenet ，那我们就不得不说说 MNIST  数据集。这个手写数字的数据集是非常常用的数据集之一了。在这个数据及上的手写数字识别的比赛，发展到目前已经算是基本解决了。但是发展的历程还是值得一看的。我们就看一下 LeCun  他的工作的历程吧。 LeCun  在这个数据集上尝试了很多的方法，从 1-layer neural network ， K-nearest nei">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/moti.jpg">
+<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/fram.jpg">
+<meta property="og:updated_time" content="2016-06-23T12:51:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CNN">
+<meta name="twitter:description" content="Lenet5MNIST要说 Lenet ，那我们就不得不说说 MNIST  数据集。这个手写数字的数据集是非常常用的数据集之一了。在这个数据及上的手写数字识别的比赛，发展到目前已经算是基本解决了。但是发展的历程还是值得一看的。我们就看一下 LeCun  他的工作的历程吧。 LeCun  在这个数据集上尝试了很多的方法，从 1-layer neural network ， K-nearest nei">
+<meta name="twitter:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/moti.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://li-haoran.github.io/2016/06/23/CNN/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>CNN | Haoran LI's blog</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a8da5cf7fabdb959fb5281387aff437b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Haoran LI's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">A collection of ideas annd thoughts</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Basculer la barre de navigation">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Accueil</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="https://li-haoran.github.io/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>Catégories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="https://li-haoran.github.io/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="https://li-haoran.github.io/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>Mots clés</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://li-haoran.github.io/2016/06/23/CNN/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Haoran LI">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Haoran LI's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CNN
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posté le</span>
+              
+
+              
+                
+              
+
+              <time title="Article créé le: 2016-06-23 12:11:38 / Mise à jour le: 20:51:02" itemprop="dateCreated datePublished" datetime="2016-06-23T12:11:38+08:00">2016-06-23</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Tutorial/" itemprop="url" rel="index"><span itemprop="name">Tutorial</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Lenet5"><a href="#Lenet5" class="headerlink" title="Lenet5"></a>Lenet5</h1><h2 id="MNIST"><a href="#MNIST" class="headerlink" title="MNIST"></a>MNIST</h2><p>要说 Lenet ，那我们就不得不说说 MNIST  数据集。这个手写数字的数据集是非常常用的数据集之一了。在这个数据及上的手写数字识别的比赛，发展到目前已经算是基本解决了。但是发展的历程还是值得一看的。我们就看一下 LeCun  他的工作的历程吧。 LeCun  在这个数据集上尝试了很多的方法，从 1-layer neural network ， K-nearest neighbors + Distance method  再到 PCA ， SVM ， Multi-layers neural network  最后提出了 Convolutional neural network 。 是一个很值得思考的过程，但是在每一分项中，他都没有达到最好的的成绩，有点前人栽树，后人乘凉的味道。</p>
+<p>具体的数据集我就不再这里介绍了，感兴趣的可以去 LeCun 的主页上可以找到相关的信息。 LeCun 也是在这个模型上，完成了商用的首写数字识别系统，具体的可以参考 LeCun 98年发表的那个 Gradient-based learning applied to document recognition ，不过那篇文章是个 Sequential handwriting number recognition ，所以是在卷积神经网络前面接了一个 HMM  作为序列的分割和拼接。我们并不关注前端的 HMM ，我们这里只关注我们感兴趣的 CNN 。</p>
+<p>下面的章节我们主要参考的是<a href="http://deeplearning.net/tutorial/lenet.html" target="_blank" rel="noopener">这里</a>的教程，还有 Jake Bouvrie  的“ Notes on Convolutional Neural Networks<br>”。</p>
+<h2 id="motivation"><a href="#motivation" class="headerlink" title="motivation"></a>motivation</h2><p>卷积神经网络和之前的神经网络最大的区别，应该是有三点：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/moti.jpg" alt="motivation"></p>
+<blockquote>
+<p>卷积神经网络特征</p>
+</blockquote>
+<p>1.<em>Receptive field</em>：局部感受野，主要描述的是，输出不再是空间无关的了。每一个输出是有一定的空间意义的，然后根据 Hubel,Wiesel  对人脑的链接的研究，提出每一个输出只和输入的相对应的空间位置的一个邻域内部的输入有关的。这个观点非常适合具有局部特性的数据的处理，例如图像数据。</p>
+<p>2.<em>Shared weights</em>：共享权值，这个说的是每个输出所对应的权值是相同的，但是每一个空间位置是由多个输出（多个 Kernels ）组成的。这个我们直观来理解就是，用一个边缘检测的例子，我们用不同方向（对应多个核）的滤波器进行全图（对应共享权值）的滤波，然后综合各个滤波的结果得到我们想要的边缘。</p>
+<p>3.<em>Pooling</em>：池化，关于池化，是有很多种形式的，最主要的形式就是 MAX pooling ，就是在一个邻域里面取最大值。因为实在一个邻域里面取最大值，所以起到了的降维的作用。这个同时还会得到一个更好的效果，那就是 invariance 。</p>
+<h2 id="Lenet"><a href="#Lenet" class="headerlink" title="Lenet"></a>Lenet</h2><p>说了这么多，让我们来看一个实例吧：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/fram.jpg" alt="framework"></p>
+<blockquote>
+<p>网络结构</p>
+</blockquote>
+<p>我们先来看一下这个网络的结构吧。这是一个7层的神经网络，输入的是一个32x32 的灰度图， S  表示的是下采样层， C 表示的是卷积层， F  表示的是全连接层。根据上图，我们可以很清楚的看到，第一层是一个卷积层，其包含6 个5x5的卷积核，参数个数156，也就是说这里的输出有6 个28x28 的特征图。第二层是一个下采样层，这里的下采样策略都是 MEAN pooling ，采样窗的大小都是2x2，参数个数是12个（一个特征图对应两个参数），所以这里的输出就变成了6 个14x14 的特征图。第三层是一个卷积层，但是这里涉及到一个问题，那就是上一层有6 个特征图，而这一层，我们有16 个5x5 的卷积核，也就是说我们应该得到16 个特征图，那我们怎么建立这6 个输入和16 个输出的关系呢。显然，我们是不想输出的每一个特征图都和之前的特征图链接的（我觉得这里可能是想保持空间特异性的，当然也不排除只是为了计算复杂性）。那 LeCun  是怎么定义这之间的链接的呢？</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">0</th>
+<th style="text-align:center">1</th>
+<th style="text-align:center">2</th>
+<th style="text-align:center">3</th>
+<th style="text-align:center">4</th>
+<th style="text-align:center">5</th>
+<th style="text-align:center">6</th>
+<th style="text-align:center">7</th>
+<th style="text-align:center">8</th>
+<th style="text-align:center">9</th>
+<th style="text-align:center">10</th>
+<th style="text-align:center">11</th>
+<th style="text-align:center">12</th>
+<th style="text-align:center">13</th>
+<th style="text-align:center">14</th>
+<th style="text-align:center">15</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td>1</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td>3</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td>4</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td>5</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+</tr>
+</tbody>
+</table>
+<p> 现在我们搞清楚了第二层和第三层是怎么连接的，这里的参数个数是6x（3x25+1）+9x（4x25+1）+6x25+1）=1516，第三层的输出是16 个10x10 的特征图，下面我们接着看第四层。第四层是一个下采样层，采样策略和采样窗的大小都与之前的采样层是一样，所以输出的结果是16 个5x5 的特征图。然后第五层还是一个卷积层（这里也可以看做是一个全连接层，当且仅当输入的特征图的大小和卷积核一样大的时候。）但是按照 LeCun 关于参数的计算，这里的参数是120x（16x25+1）= 48120，也就是说这里没有任何的权值共享，每一个输出对应的所有输入的参数都不一样这样才能保证参数是48120。第六层也是全连接层，输入是120，输出时84，所以参数是84x （120+1）=10164，最后一层就是输出了，这里的实处是10，也就是说这里训练的参数是（84+1）x10=850.</p>
+<p>好了，这样整个结构就基本整明白了。下面我们开始介绍这个卷积神将网络的训练。</p>
+<h3 id="Forward-pass"><a href="#Forward-pass" class="headerlink" title="Forward pass"></a>Forward pass</h3><p>为了方便，我们用$u^l$表示第$l$层的输出，最后输出层的输出，我们使用$t$ 表示，这里我们使用的激活函数<br>$$f(\cdot)=sigmoid(\cdot)$$<br>我们用$\star$ 代表卷积。好了那我们来看一下卷积层和下采样层，全连接层都是怎么计算的。<br>对于卷积层，我们的计算过程是：<br>$$u_i^l=W_i^l \star x^{l-1}+b_i^l,~~~i\in~|F.map|$$<br>然后输出是:<br>$$x_i^l=f(u_i^l)$$<br>但是中间的卷积层是由多个输入特征图的，所以之前的公式应该变成：<br>$$u_i^l=\sum_{j \in M_i} x_j^{l-1}*k_{ji}^l +b_i^l$$<br>这里的$M_i$表示的是所选取的输入特征图。</p>
+<p>对于下采样层我们的计算公式是：</p>
+<p>$$u_i^l=\beta_i^l down(x_i^{l-1})+b_i^l,~~~i\in~|F.map|$$</p>
+<p>对于全连接层，就和之前的神经网络是一样的：<br>$$  u^l=W^l \cdot x^{l-1}+b^l $$</p>
+<p>然后我们使用的损失函数是：<br>\begin{equation}\label{6}<br>  E^N=\frac{1}{2}\sum_{n=1}^{N}\sum_{k=1}^{c}(t_k^n-y_k^n)^2<br>\end{equation}</p>
+<p>这个就是前向的过程了，下面我们重点关注反向传播的过程。</p>
+<h3 id="Backpropagation-pass"><a href="#Backpropagation-pass" class="headerlink" title="Backpropagation pass"></a>Backpropagation pass</h3><p>让我们先回顾一下原来的人工神经网络里面的反向传播算法是什么样子的。</p>
+<p>首先我们定义了一个灵敏度（也就是对偏置的导数）：<br>\begin{equation}\label{7}<br>  \frac{\partial E}{\partial b}=\frac{\partial E}{\partial u} \frac{\partial u}{\partial b}=\delta<br>\end{equation}</p>
+<p>然后我们还能给出本层的灵敏度和上一层的灵敏度之间的关系（这个对于编程是很有用的）：<br>\begin{equation}\label{8}<br>  \delta^l=(W^{l+1})^T\delta^{l+1} \circ f’(u^l)<br>\end{equation}</p>
+<p>然后这些都知道了，由于是反向传播，我们从最上层，开始的，所以只要知道最上层的灵敏度：<br>\begin{equation}\label{9}<br>  \delta^L=f’(u^L) \circ (y^n-t^n)<br>\end{equation}</p>
+<p>这就相当于，我们知道了每一层偏置的导数，然后我们就很容易得到关于$w$的导数：<br>\begin{equation}\label{19}<br>  \frac{\partial E}{\partial W^t}=x^{l-1}(\delta ^l)^T<br>\end{equation}</p>
+<p>这样我们就可以使用梯度下降法进行反向传播的求解了。但是这个是不能直接应用到卷积神经网络的，主要是因为这里有卷积层的卷积操作和下采样层的下采样函数，这个都是不是那么容易求导的，我们要作相应的改动才可以。</p>
+<h3 id="BP-for-CNN"><a href="#BP-for-CNN" class="headerlink" title="BP for CNN"></a>BP for CNN</h3><p>反向传播，那我们就从全链接开始吧。全连接层，和之前的反向传播算法的求解过程是一样的。所以就不在这里一一赘述了。下面，我们主要讲一下，卷积层和下采样层是怎么求解的吧。</p>
+<p>（1）卷积层：</p>
+<p>先让我们回去一下之前的卷积层的操作：<br>\begin{equation}\label{10}<br>  x_j^l=f\left (  \sum_{i \in M_j} x_i^{l-1}*k_{ij}^l +b_j^l\right )<br>\end{equation}</p>
+<p>由于上一层是下采样层，所以上一层的灵敏度因子是不够的。所以我们不能直接的使用之前的灵敏度之间的关系来获取这一层的灵敏度。这里要引入一个上采样的过程，也就是把上一层的一个灵敏度扩充为2*2 的灵敏度，具体的函数是：<br>\begin{equation}\label{11}<br>  up(x)=x \otimes 1_{n \times n}<br>\end{equation}</p>
+<p>这里的$\otimes$ 是$kronecker$ 乘积的意思，在$Matlab$中，我们可以使用$repmat$函数。我们上采样完了，就可以计算这一层的灵敏度了：<br>\begin{equation}\label{12}<br>  \delta_j^l=\beta _j^{l+1}\left( f’(u_j^l) \circ up(\delta_j^{l+1})\right)<br>\end{equation}</p>
+<p>这个就是~pooling~惹的祸啊！下面还有更大的麻烦呢，那就是共享权值的结果，因为这里的$b_j,k_{ij}$ 都是共享的，换句话说，这里的参数训练是和整张的特征图都是相关的，而不是仅仅和输出的一个节点有关，那我们该怎么办呢？求和吧，少年！<br>\begin{equation}\label{13}<br>  \frac{\partial E}{\partial b_j^l}=\sum_{u,v}(\delta_j^l)_{uv}<br>\end{equation}<br>\begin{equation}\label{18}<br>  \frac{\partial E}{\partial k_{ij}^l}=\sum_{u,v}(\delta_j^l)_{uv}(p_i^{l-1})_{uv}<br>\end{equation}</p>
+<p>需要注意的是这里的$p_i^{l-1}$ 是之前卷积的时候，与卷积核相乘的块的\emph{转置}（这就是局部感受野惹的祸啊），这个公式计算起来可能并不是那么容易，但是~Jake Bouvrie~ 给出了对应的$Matlab$ 公式：<br>$$ \frac{\partial E}{\partial k_{ij}^l}=rot180\big(conv2(x_i^{l-1},rot180(\delta_j^l),’valid’)\big)$$</p>
+<p>这样，这一块我们就基本了解了，下面我们来看看下采样层吧。</p>
+<p>（2）下采样层：</p>
+<p>我们还是先回顾一下之前的计算公式：<br>\begin{equation}\label{14}<br>  x_j^l=f\left( \beta_j^l down(x_j^{l-1}) +b_j^l \right)<br>\end{equation}<br>这里的下采样是一个求均值的过程。</p>
+<p>这一个地方的灵敏度是最不好计算的，因为上一层是一个卷机层，而且这里一个特征图只有两个参数，也就是说，整张特征图都共享这两个参数。这里给出一个公式：<br>\begin{equation}\label{17}<br>  \delta_j^l=f’(u_j^l) \circ \sum_{u,v}(\delta_j^{l+1})_{uv}(k_j^{l+1})_{uv}<br>\end{equation}<br>~Jake Bouvrie~ 给出了对应的$Matlab$ 公式：</p>
+<p>$$ \delta_j^l=f’(u_j^l)\circ conv2(x_j^{l+1},rot180(k_j^{l+1}), ‘full’)$$</p>
+<p>给出了灵敏度因子，一切就变得好计算了：</p>
+<p>\begin{equation}\label{15}<br>  \frac{\partial E}{\partial b_j^l}=\sum_{u,v}(\delta_j^l)_{uv}<br>\end{equation}</p>
+<p>\begin{equation}\label{16}<br>  \frac{\partial E}{\partial \beta_j^l}=\sum_{u,v}(\delta_j^l \circ d_j^l)_{uv}<br>\end{equation}<br>这里需要注意的是，因为是下采样层，所以计算$\beta$ 的导数的时候，还是会涉及到下采样$d_j^l=down(x_j^{l-1})$，这样就基本解释清楚了。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/卷积神经网络/" rel="tag"># 卷积神经网络</a>
+          
+            <a href="/tags/梯度下降/" rel="tag"># 梯度下降</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/24/CRF/" rel="prev" title="CRF">
+                CRF <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table Des Matières
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Ensemble
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Haoran LI</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="https://li-haoran.github.io/archives/">
+                
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">articles</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="https://li-haoran.github.io/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">catégories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="https://li-haoran.github.io/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">mots clé</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/li-haoran" title="GitHub &rarr; https://github.com/li-haoran" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Lenet5"><span class="nav-number">1.</span> <span class="nav-text">Lenet5</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MNIST"><span class="nav-number">1.1.</span> <span class="nav-text">MNIST</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#motivation"><span class="nav-number">1.2.</span> <span class="nav-text">motivation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lenet"><span class="nav-number">1.3.</span> <span class="nav-text">Lenet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Forward-pass"><span class="nav-number">1.3.1.</span> <span class="nav-text">Forward pass</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Backpropagation-pass"><span class="nav-number">1.3.2.</span> <span class="nav-text">Backpropagation pass</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BP-for-CNN"><span class="nav-number">1.3.3.</span> <span class="nav-text">BP for CNN</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haoran LI</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Alimenté par <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Thème – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
