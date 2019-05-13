@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="Haoran LI&#39;s blog">
 <meta property="og:description" content="模型构建最近 SE_net, Non_local, GLoRe, GC_net, 的出现，我们开始更多的通过显式的约束来构建网络结构。其实这种通过显式的约束来构建模型的方式，例如通过显式的可变性模块构建空间关系的 Deformable conv. 仿射变换（全局模式，局部模式）其实在构建网络的时候，我们有很多显式的约束，例如图像空间中物体的仿射变换：  多尺度 旋转 平移  在网络中多尺度，可以被">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-05-13T11:57:09.238Z">
+<meta property="og:updated_time" content="2019-05-13T11:59:46.927Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="model_insight">
 <meta name="twitter:description" content="模型构建最近 SE_net, Non_local, GLoRe, GC_net, 的出现，我们开始更多的通过显式的约束来构建网络结构。其实这种通过显式的约束来构建模型的方式，例如通过显式的可变性模块构建空间关系的 Deformable conv. 仿射变换（全局模式，局部模式）其实在构建网络的时候，我们有很多显式的约束，例如图像空间中物体的仿射变换：  多尺度 旋转 平移  在网络中多尺度，可以被">
@@ -381,7 +381,7 @@
                 
               
 
-              <time title="创建时间：2019-05-13 13:39:10 / 修改时间：19:57:09" itemprop="dateCreated datePublished" datetime="2019-05-13T13:39:10+08:00">2019-05-13</time>
+              <time title="创建时间：2019-05-13 13:39:10 / 修改时间：19:59:46" itemprop="dateCreated datePublished" datetime="2019-05-13T13:39:10+08:00">2019-05-13</time>
             
 
             
@@ -452,7 +452,7 @@
 <li>同一层次的语义之间的关系</li>
 <li>不同层次的语义之间的关系</li>
 </ul>
-<p>这里我们定义一些符号 $f \in R^{c<em>h</em>w}$ 的三维的向量，这里我们对这个原始特征进行变形为 $nf \in R^{c*(hw)}$.<br>那么图像内部的空间关系的构建，也是是我们所说的 no-local net, 通过枚举图像中所有空间位置之间的相互关系，对相关的特征进行聚合，获得最终的特征表达。大致可以表示为：<br>$$ ff=nf \times softmax_{c=1}(nf^T nf) +nf$$</p>
+<p>这里我们定义一些符号 $f \in R^{c<em>h</em>w}$ 的三维的向量，这里我们对这个原始特征进行变形为 $nf \in R^{c*(hw)}$.<br>那么图像内部的空间关系的构建，也是是我们所说的 non_local net, 通过枚举图像中所有空间位置之间的相互关系，对相关的特征进行聚合，获得最终的特征表达。大致可以表示为：<br>$$ ff=nf \times softmax_{c=1}(nf^T nf) +nf$$</p>
 <p>那SE_net描述的同一层次的语义相关性，或者也可以认为是注意力机制：<br>$$ ff= \Theta (\max_{c=1}(nf) \times f$$<br>这里的 $\Theta$ 对通道之间的关系进行建模，以此获得更重要的通道。</p>
 <p>在GC-net中，空间的约束并不是non_local，因为non_local的计算量是非常大的，尤其是当特征图的特别大的时候，所以在GC中可以看作一种自注意力机制，有点像CAM之类的东西，并没有对图像中内部关系进行建模。但是这样做的好处就是有效的降低了计算量。</p>
 <p>其实在分类问题中，我们应该更深入的思考问题，空间的相关性，和特征的相关性怎样才能更好的被建模。</p>
