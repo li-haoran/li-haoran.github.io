@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="起源当很多的概念放在一起的时候，我们一般会怎么看待这些语义呢？很多时候我们并不关系这些语义之间是否有关系，或者说语义之间的关系并不需要我们作为一种监督信号或者是学习规则加入到整个模型中。例如在物体识别中，我们并不关心语义之间的关系，而是建立一个统一的模型。虽然我们最终的特征中蕴含了这种语义的结构信息，但是这还是不够明显的。怎么去显式的表示这种语义的结构，并能很好的去运用它，这就是我的目的。 物体模">
-<meta name="keywords" content="多任务学习,多监督,物体模型,上下文,注意力">
+  <meta name="description" content="模型构建最近 SE_net, Non_local, GLoRe, GC_net, 的出现，我们开始更多的通过显式的约束来构建网络结构。其实这种通过显式的约束来构建模型的方式，例如通过显式的可变性模块构建空间关系的 Deformable conv. 仿射变换（全局模式，局部模式）其实在构建网络的时候，我们有很多显式的约束，例如图像空间中物体的仿射变换：  多尺度 旋转 平移  在网络中多尺度，可以被">
+<meta name="keywords" content="channel relation,channel attention,spatial relation,spatial attention">
 <meta property="og:type" content="article">
-<meta property="og:title" content="semantic-structure">
-<meta property="og:url" content="https://li-haoran.github.io/2019/04/09/semantic-structure/index.html">
+<meta property="og:title" content="model_insight">
+<meta property="og:url" content="https://li-haoran.github.io/2019/05/13/model-insight/index.html">
 <meta property="og:site_name" content="Haoran LI&#39;s blog">
-<meta property="og:description" content="起源当很多的概念放在一起的时候，我们一般会怎么看待这些语义呢？很多时候我们并不关系这些语义之间是否有关系，或者说语义之间的关系并不需要我们作为一种监督信号或者是学习规则加入到整个模型中。例如在物体识别中，我们并不关心语义之间的关系，而是建立一个统一的模型。虽然我们最终的特征中蕴含了这种语义的结构信息，但是这还是不够明显的。怎么去显式的表示这种语义的结构，并能很好的去运用它，这就是我的目的。 物体模">
+<meta property="og:description" content="模型构建最近 SE_net, Non_local, GLoRe, GC_net, 的出现，我们开始更多的通过显式的约束来构建网络结构。其实这种通过显式的约束来构建模型的方式，例如通过显式的可变性模块构建空间关系的 Deformable conv. 仿射变换（全局模式，局部模式）其实在构建网络的时候，我们有很多显式的约束，例如图像空间中物体的仿射变换：  多尺度 旋转 平移  在网络中多尺度，可以被">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-04-15T07:52:42.142Z">
+<meta property="og:updated_time" content="2019-05-13T11:49:36.409Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="semantic-structure">
-<meta name="twitter:description" content="起源当很多的概念放在一起的时候，我们一般会怎么看待这些语义呢？很多时候我们并不关系这些语义之间是否有关系，或者说语义之间的关系并不需要我们作为一种监督信号或者是学习规则加入到整个模型中。例如在物体识别中，我们并不关心语义之间的关系，而是建立一个统一的模型。虽然我们最终的特征中蕴含了这种语义的结构信息，但是这还是不够明显的。怎么去显式的表示这种语义的结构，并能很好的去运用它，这就是我的目的。 物体模">
+<meta name="twitter:title" content="model_insight">
+<meta name="twitter:description" content="模型构建最近 SE_net, Non_local, GLoRe, GC_net, 的出现，我们开始更多的通过显式的约束来构建网络结构。其实这种通过显式的约束来构建模型的方式，例如通过显式的可变性模块构建空间关系的 Deformable conv. 仿射变换（全局模式，局部模式）其实在构建网络的时候，我们有很多显式的约束，例如图像空间中物体的仿射变换：  多尺度 旋转 平移  在网络中多尺度，可以被">
 
 
 
@@ -115,7 +115,7 @@
 
   
   
-  <link rel="canonical" href="https://li-haoran.github.io/2019/04/09/semantic-structure/">
+  <link rel="canonical" href="https://li-haoran.github.io/2019/05/13/model-insight/">
 
 
 
@@ -125,7 +125,7 @@
   };
 </script>
 
-  <title>semantic-structure | Haoran LI's blog</title>
+  <title>model_insight | Haoran LI's blog</title>
   
 
 
@@ -338,7 +338,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://li-haoran.github.io/2019/04/09/semantic-structure/">
+    <link itemprop="mainEntityOfPage" href="https://li-haoran.github.io/2019/05/13/model-insight/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Haoran LI">
@@ -355,7 +355,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">semantic-structure
+          <h1 class="post-title" itemprop="name headline">model_insight
 
               
             
@@ -381,24 +381,12 @@
                 
               
 
-              <time title="创建时间：2019-04-09 12:08:38" itemprop="dateCreated datePublished" datetime="2019-04-09T12:08:38+08:00">2019-04-09</time>
+              <time title="创建时间：2019-05-13 13:39:10 / 修改时间：19:49:36" itemprop="dateCreated datePublished" datetime="2019-05-13T13:39:10+08:00">2019-05-13</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-15 15:52:42" itemprop="dateModified" datetime="2019-04-15T15:52:42+08:00">2019-04-15</time>
               
             
           </span>
@@ -450,13 +438,40 @@
       
 
       
-        <h1 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h1><p>当很多的概念放在一起的时候，我们一般会怎么看待这些语义呢？很多时候我们并不关系这些语义之间是否有关系，或者说语义之间的关系并不需要我们作为一种监督信号或者是学习规则加入到整个模型中。例如在物体识别中，我们并不关心语义之间的关系，而是建立一个统一的模型。虽然我们最终的特征中蕴含了这种语义的结构信息，但是这还是不够明显的。怎么去显式的表示这种语义的结构，并能很好的去运用它，这就是我的目的。</p>
-<h2 id="物体模型"><a href="#物体模型" class="headerlink" title="物体模型"></a>物体模型</h2><p>在物体的模型中，尤其是部件模型，是对语义建模的最好的显式表达。从DPM开始的星型结构模型等一系列的工作，我们可以很好的感受，概念之间的结构化关系，而这种结构化关系又很好的辅助了任务的完成。还有 and-or图，这种语义结构构建规则，在很多方面已经得到了很好的应用。</p>
-<h2 id="上下文"><a href="#上下文" class="headerlink" title="上下文"></a>上下文</h2><p>随着深度模型的不断发展，而深度模型通过简单的卷积结构并不能很好的利用深度特征。而上下文，也就是特征中空间相关的特征的推理，并不能有效的被卷积建模。所以在这个过程需要显式的规则（机制）的约束，才能更有效的建模上下文信息。</p>
-<h2 id="注意力"><a href="#注意力" class="headerlink" title="注意力"></a>注意力</h2><p>除了上下文，注意力可以看作是上下文的另一个代名词。注意力在最开始的时候是强调不通过模态之间的关联性的，但是随着注意力机制被广泛运用在不同的领域，自注意力在单一任务中被大量使用。其实，自注意力可以说是一种上下文建模的机制。</p>
-<h2 id="多任务学习"><a href="#多任务学习" class="headerlink" title="多任务学习"></a>多任务学习</h2><p>多任务学习，就是将不同的任务融合如统一的一个框架。而任务之间的关系决定了这些任务能不能融合，应该怎么融合。</p>
-<h2 id="多监督"><a href="#多监督" class="headerlink" title="多监督"></a>多监督</h2><p>同一个任务，为了使得模型获得更好的结构，我们通常会迭代的优化。而对于有监督的学习，我们通常会设计更多的监督信号去使得这个模型能逐步的缩小误差。或者我们加入的监督信号并不是一样的，这样能使得模型更好的学习目标。</p>
-<p>在这些问题中，语义的结构是至关重要的。无论是以显式的监督信号，还是以规则的方式，都对最终的任务起到重要的影响因素。</p>
+        <h1 id="模型构建"><a href="#模型构建" class="headerlink" title="模型构建"></a>模型构建</h1><p>最近 SE_net, Non_local, GLoRe, GC_net, 的出现，我们开始更多的通过显式的约束来构建网络结构。其实这种通过显式的约束来构建模型的方式，例如通过显式的可变性模块构建空间关系的 Deformable conv.</p>
+<h2 id="仿射变换（全局模式，局部模式）"><a href="#仿射变换（全局模式，局部模式）" class="headerlink" title="仿射变换（全局模式，局部模式）"></a>仿射变换（全局模式，局部模式）</h2><p>其实在构建网络的时候，我们有很多显式的约束，例如图像空间中物体的仿射变换：</p>
+<ul>
+<li>多尺度</li>
+<li>旋转</li>
+<li>平移</li>
+</ul>
+<p>在网络中多尺度，可以被不同大小的卷积核近似模仿，而最近的trident-net，用了共享权值的多尺度网络更合理的解决了多尺度问题。并且最近的octava conv slow-fast 也可以看作一种不同尺度的建模。可变性卷积可以看作是图像空间的仿射变换的拆分。</p>
+<h2 id="语义相关性"><a href="#语义相关性" class="headerlink" title="语义相关性"></a>语义相关性</h2><p>在构建网络中除了我们关注物体的空间表现形式。我们往往还会关心图像中物体的相互关系，或者是不通层次的语义之间的关系，或者同一层次语义之间关系。那么这里我们就引出了三个我们想要建模的概念：</p>
+<ul>
+<li>图像中语义的空间关系</li>
+<li>同一层次的语义之间的关系</li>
+<li>不同层次的语义之间的关系</li>
+</ul>
+<p>这里我们定义一些符号$f \in R^{c<em>h</em>w}$的三维的向量，这里我们对这个原始特征进行变形为$nf \in R^{c<em>(hw)}$.<br>那么图像内部的空间关系的构建，也是是我们所说的 no-local net, 通过枚举图像中所有空间位置之间的相互关系，对相关的特征进行聚合，获得最终的特征表达。大致可以表示为：<br>$$ ff=nf \times softmax_{c=1}(nf^T</em>nf) +nf$$</p>
+<p>那SE_net描述的同一层次的语义相关性，或者也可以认为是注意力机制：<br>$$ ff= \Theta (\max_{c=1}(nf) \times f$$<br>这里的$\Theta$对通道之间的关系进行建模，以此获得更重要的通道。</p>
+<p>在GC-net中，空间的约束并不是non_local，因为non_local的计算量是非常大的，尤其是当特征图的特别大的时候，所以在GC中可以看作一种自注意力机制，有点像CAM之类的东西，并没有对图像中内部关系进行建模。但是这样做的好处就是有效的降低了计算量。</p>
+<p>其实在分类问题中，我们应该更深入的思考问题，空间的相关性，和特征的相关性怎样才能更好的被建模。</p>
+<ul>
+<li style="list-style: none"><input type="checkbox"> 建模什么样的空间相关性？</li>
+<li style="list-style: none"><input type="checkbox"> 语义之间的相关性怎么建模？被用来干什么？</li>
+</ul>
+<h2 id="空间的相关性，被用来做什么"><a href="#空间的相关性，被用来做什么" class="headerlink" title="空间的相关性，被用来做什么?"></a>空间的相关性，被用来做什么?</h2><p>在视频的理解过程中，空间的相关性一般被用来对相邻帧内部的物体的相关性进行建模的，类似轨迹聚类这种。但是在图像的分类中，空间聚类被用来干什么。从可变性卷积，我们看一看到空间的相关性，很多时候是物体的共生性，也就是同一个物体的不同的part之间的共生性，或者是其他更多语义上的共生性，这种共生性在语义上可能并不具有non_local中的特征相似性。所以对这种建模，更好的方式进行建模。</p>
+<h2 id="语义之间的相关性怎么建模？被用来干什么？"><a href="#语义之间的相关性怎么建模？被用来干什么？" class="headerlink" title="语义之间的相关性怎么建模？被用来干什么？"></a>语义之间的相关性怎么建模？被用来干什么？</h2><p>在SE_net中，使用的$\Theta$是对通道之间的相关性进行建模的，<code>可是这个相关性是什么呢？</code> 其实并没有很好的回答。那么怎么才能更好的理解这种相关性呢？</p>
+<p>同一层次的语义之间的关系，我最先想到的就是 GRAM matrix, bilinear pooling，style transfer中使用作为图像的有效表达。大致可以表示为：<br>$$ ff=nf*nf^T $$<br>这里很好的保存了不同通道之间的相关性，这个和non_local看着十分相似。</p>
+<blockquote>
+<p>假设 1. 相关性大特征对分类更加有效，相当于对细小特征空间的细分，所以应该加强这部分的特征。</p>
+</blockquote>
+<blockquote>
+<p>假设 2. 相关性大的特征影响了空间的分布，我们应该使得空间更加的均匀，所以应该抑制。</p>
+</blockquote>
+<p>那么我们有了相关性，有了语义的相关性，和两个假设我们应该怎么对这些特征进行建模呢？</p>
+<p>$$ ff= sigmoid(\Phi \sum_{c=1}(nf*nf^T)) \times f$$</p>
+<p>或者是<br>$$ ff= (1-sigmoid(\Phi \sum_{c=1}(nf*nf^T))) \times f$$</p>
 
       
     </div>
@@ -480,15 +495,13 @@
       
         <div class="post-tags">
           
-            <a href="/tags/多任务学习/" rel="tag"># 多任务学习</a>
+            <a href="/tags/channel-relation/" rel="tag"># channel relation</a>
           
-            <a href="/tags/多监督/" rel="tag"># 多监督</a>
+            <a href="/tags/channel-attention/" rel="tag"># channel attention</a>
           
-            <a href="/tags/物体模型/" rel="tag"># 物体模型</a>
+            <a href="/tags/spatial-relation/" rel="tag"># spatial relation</a>
           
-            <a href="/tags/上下文/" rel="tag"># 上下文</a>
-          
-            <a href="/tags/注意力/" rel="tag"># 注意力</a>
+            <a href="/tags/spatial-attention/" rel="tag"># spatial attention</a>
           
         </div>
       
@@ -501,8 +514,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/09/intro/" rel="next" title="about myself">
-                <i class="fa fa-chevron-left"></i> about myself
+              <a href="/2019/04/09/semantic-structure/" rel="next" title="semantic-structure">
+                <i class="fa fa-chevron-left"></i> semantic-structure
               </a>
             
           </div>
@@ -510,10 +523,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/05/13/model-insight/" rel="prev" title="model_insight">
-                model_insight <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -716,7 +725,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#起源"><span class="nav-number">1.</span> <span class="nav-text">起源</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#物体模型"><span class="nav-number">1.1.</span> <span class="nav-text">物体模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上下文"><span class="nav-number">1.2.</span> <span class="nav-text">上下文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意力"><span class="nav-number">1.3.</span> <span class="nav-text">注意力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多任务学习"><span class="nav-number">1.4.</span> <span class="nav-text">多任务学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多监督"><span class="nav-number">1.5.</span> <span class="nav-text">多监督</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模型构建"><span class="nav-number">1.</span> <span class="nav-text">模型构建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#仿射变换（全局模式，局部模式）"><span class="nav-number">1.1.</span> <span class="nav-text">仿射变换（全局模式，局部模式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语义相关性"><span class="nav-number">1.2.</span> <span class="nav-text">语义相关性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#空间的相关性，被用来做什么"><span class="nav-number">1.3.</span> <span class="nav-text">空间的相关性，被用来做什么?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语义之间的相关性怎么建模？被用来干什么？"><span class="nav-number">1.4.</span> <span class="nav-text">语义之间的相关性怎么建模？被用来干什么？</span></a></li></ol></li></ol></div>
             
 
           </div>
