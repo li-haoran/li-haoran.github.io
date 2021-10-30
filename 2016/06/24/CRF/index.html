@@ -1,473 +1,262 @@
 <!DOCTYPE html>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-<html class="theme-next muse use-motion" lang="zh-CN">
-<head><meta name="generator" content="Hexo 3.8.0">
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
-
-<link rel="stylesheet" href="/css/main.css?v=7.1.0">
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
-
-
-  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
-
-
-
-
-
-
-
-<script id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Muse',
-    version: '7.1.0',
-    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
-    back2top: true,
-    back2top_sidebar: false,
-    fancybox: false,
-    fastclick: false,
-    lazyload: false,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
-  
-
-
-
-
-  <meta name="description" content="PGM我们首先讲讲概率图模型吧。作为建模的最主要的工具，不知道是不是不太好啊。个人观点是： Model based 学习方法才是更合理的，为什么这样说呢。首先呢，我们希望的是解释性，是对某些事物，某些现象做出合理的解释。那什么是解释性呢？这里我们可以说是一种因果关系，就是说一个属性和另一个属性，一个时间和另一个事件之间的因果关系。这种关系，我认为是一种基于人的认知的，也就是说机器不会有的。那 Mo">
-<meta name="keywords" content="隐马尔科夫,条件随机场">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ssfgr.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="PGM我们首先讲讲概率图模型吧。作为建模的最主要的工具，不知道是不是不太好啊。个人观点是： Model based 学习方法才是更合理的，为什么这样说呢。首先呢，我们希望的是解释性，是对某些事物，某些现象做出合理的解释。那什么是解释性呢？这里我们可以说是一种因果关系，就是说一个属性和另一个属性，一个时间和另一个事件之间的因果关系。这种关系，我认为是一种基于人的认知的，也就是说机器不会有的。那 Mo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CRF">
-<meta property="og:url" content="https://li-haoran.github.io/2016/06/24/CRF/index.html">
+<meta property="og:url" content="https://ssfgr.top/2016/06/24/CRF/index.html">
 <meta property="og:site_name" content="Haoran LI&#39;s blog">
 <meta property="og:description" content="PGM我们首先讲讲概率图模型吧。作为建模的最主要的工具，不知道是不是不太好啊。个人观点是： Model based 学习方法才是更合理的，为什么这样说呢。首先呢，我们希望的是解释性，是对某些事物，某些现象做出合理的解释。那什么是解释性呢？这里我们可以说是一种因果关系，就是说一个属性和另一个属性，一个时间和另一个事件之间的因果关系。这种关系，我认为是一种基于人的认知的，也就是说机器不会有的。那 Mo">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/dbn.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/imap.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/mk.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/automa.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/hmm.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/meiju.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/qianxiang.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/viterbi.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/qianhou.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/memm.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/crf.jpg">
-<meta property="og:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/lcrft.jpg">
-<meta property="og:updated_time" content="2016-06-29T04:18:27.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ssfgr.top/images/dbn.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/imap.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/mk.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/automa.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/hmm.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/meiju.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/qianxiang.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/viterbi.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/qianhou.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/memm.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/crf.jpg">
+<meta property="og:image" content="http://ssfgr.top/images/lcrft.jpg">
+<meta property="article:published_time" content="2016-06-24T02:28:31.000Z">
+<meta property="article:modified_time" content="2021-10-29T15:31:19.878Z">
+<meta property="article:author" content="Haoran LI">
+<meta property="article:tag" content="隐马尔科夫">
+<meta property="article:tag" content="条件随机场">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CRF">
-<meta name="twitter:description" content="PGM我们首先讲讲概率图模型吧。作为建模的最主要的工具，不知道是不是不太好啊。个人观点是： Model based 学习方法才是更合理的，为什么这样说呢。首先呢，我们希望的是解释性，是对某些事物，某些现象做出合理的解释。那什么是解释性呢？这里我们可以说是一种因果关系，就是说一个属性和另一个属性，一个时间和另一个事件之间的因果关系。这种关系，我认为是一种基于人的认知的，也就是说机器不会有的。那 Mo">
-<meta name="twitter:image" content="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/dbn.jpg">
+<meta name="twitter:image" content="http://ssfgr.top/images/dbn.jpg">
+
+
+<link rel="canonical" href="https://ssfgr.top/2016/06/24/CRF/">
 
 
 
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ssfgr.top/2016/06/24/CRF/","path":"2016/06/24/CRF/","title":"CRF"}</script>
 
-
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>CRF | Haoran LI's blog</title>
   
-  
-  <link rel="canonical" href="https://li-haoran.github.io/2016/06/24/CRF/">
-
-
-
-<script id="page.configurations">
-  CONFIG.page = {
-    sidebar: "",
-  };
-</script>
-
-  <title>CRF | Haoran LI's blog</title>
-  
-
-
-
-
-
-
-  <script>
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "https://hm.baidu.com/hm.js?a8da5cf7fabdb959fb5281387aff437b";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
-  </script>
-
-
-
 
 
 
 
   <noscript>
-  <style>
-  .use-motion .motion-element,
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-title { opacity: initial; }
-
-  .use-motion .logo,
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left page-post-detail">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Haoran LI's blog</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
-    
-      
-        <p class="site-subtitle">A collection of ideas annd thoughts</p>
-      
-    
-    
   </div>
 
-  <div class="site-nav-toggle">
-    <button aria-label="切换导航栏">
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Haoran LI's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">A collection of ideas annd thoughts</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
   </div>
 </div>
 
 
 
 <nav class="site-nav">
-  
-    <ul id="menu" class="menu">
-      
-        
-        
-        
-          
-          <li class="menu-item menu-item-home">
-
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
-
-  </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-categories">
-
-    
-    
-    
-      
-    
-
-    
-
-    <a href="https://li-haoran.github.io/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
-
-  </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-archives">
-
-    
-    
-    
-      
-    
-
-    
-
-    <a href="https://li-haoran.github.io/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
-
-  </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-tags">
-
-    
-    
-    
-      
-    
-
-    
-
-    <a href="https://li-haoran.github.io/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
-
-  </li>
-
-      
-      
-    </ul>
-  
-
-  
-    
-
-  
-
-  
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
 </nav>
 
 
 
-  
-
-
 
 </div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#PGM"><span class="nav-number">1.</span> <span class="nav-text">PGM</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BD%91%E7%BB%9C"><span class="nav-number">1.1.</span> <span class="nav-text">贝叶斯网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A9%AC%E5%B0%94%E7%A7%91%E5%A4%AB%E7%BD%91"><span class="nav-number">1.2.</span> <span class="nav-text">马尔科夫网</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequential-data"><span class="nav-number">1.3.</span> <span class="nav-text">Sequential data</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HMM"><span class="nav-number">1.3.1.</span> <span class="nav-text">HMM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">前向算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%B4%E7%89%B9%E6%AF%94%E7%AE%97%E6%B3%95%EF%BC%88Viterbi-algorithm%EF%BC%89"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">维特比算法（Viterbi algorithm）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E5%90%8E%E5%90%91%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">前向后向算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E7%86%B5%E5%8E%9F%E7%90%86%E9%A9%AC%E5%B0%94%E7%A7%91%E5%A4%AB%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.2.</span> <span class="nav-text">最大熵原理马尔科夫模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA"><span class="nav-number">1.3.3.</span> <span class="nav-text">条件随机场</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA%E7%9A%84%E5%8F%82%E6%95%B0%E5%8C%96"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">条件随机场的参数化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">概率的计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">学习算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA%E7%9A%84%E9%A2%84%E6%B5%8B"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">条件随机场的预测</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Haoran LI</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
     </header>
 
     
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-          <div id="content" class="content">
-            
+    <div class="main-inner post posts-expand">
 
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
 
   
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+
+<div class="post-block">
   
   
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://li-haoran.github.io/2016/06/24/CRF/">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ssfgr.top/2016/06/24/CRF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Haoran LI">
-      <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Haoran LI">
+      <meta itemprop="description" content="">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="Haoran LI's blog">
     </span>
-
-    
       <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CRF
+        </h1>
 
-        
-        
-          <h1 class="post-title" itemprop="name headline">CRF
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              
-            
-          </h1>
-        
+      <time title="创建时间：2016-06-24 10:28:31" itemprop="dateCreated datePublished" datetime="2016-06-24T10:28:31+08:00">2016-06-24</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-10-29 23:31:19" itemprop="dateModified" datetime="2021-10-29T23:31:19+08:00">2021-10-29</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Tutorial/" itemprop="url" rel="index"><span itemprop="name">Tutorial</span></a>
+        </span>
+    </span>
 
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2016-06-24 10:28:31" itemprop="dateCreated datePublished" datetime="2016-06-24T10:28:31+08:00">2016-06-24</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2016-06-29 12:18:27" itemprop="dateModified" datetime="2016-06-29T12:18:27+08:00">2016-06-29</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Tutorial/" itemprop="url" rel="index"><span itemprop="name">Tutorial</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
+  
+</div>
 
         </div>
       </header>
-    
 
     
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
         <h1 id="PGM"><a href="#PGM" class="headerlink" title="PGM"></a>PGM</h1><p>我们首先讲讲概率图模型吧。作为建模的最主要的工具，不知道是不是不太好啊。个人观点是： Model based 学习方法才是更合理的，为什么这样说呢。首先呢，我们希望的是解释性，是对某些事物，某些现象做出合理的解释。那什么是解释性呢？这里我们可以说是一种因果关系，就是说一个属性和另一个属性，一个时间和另一个事件之间的因果关系。这种关系，我认为是一种基于人的认知的，也就是说机器不会有的。那 Model free 的学习方法在学习什么呢？我认为这种模型在学习一种相关性，也就是说，一个时间和另一个事件的相关性，是正相关还是负相关。我们都知道相关性不等于因果性。但是某种意义上，这两个关系也有很强的关系，使得很难区分。首先机器是没有办法区分的，因为因果性不是简简单单的相关性加上时间序，因果性需要更强的物理意义，物理意义有很难直接跨过认为建模来在机器中直接产生。所以我倾向于 Model based  学习方法。</p>
 <p> PGM ，就是 probabilistic graphical models 的简称，中文翻译作概率图模型。这个基础理论由来已久了吧，经过人们的不断地完善，这个理论已经趋于成熟。我也是参看了 Daphne Kollar 的《概率图模型：原理和技术》（中译版），对概率图模型有了一个初步的认识。图模型，这个我们在离散数学中经常提到的概念，在这里变成了可以一种抽象工具。可以抽象一个事件的各个部件之间的关系，可以抽象一个问题的前因后果，甚至可以抽象整个世界的运转（说的有点夸张，不过确实是有很大用处）。我知道的一些大牛，例如 Micheal Jordan，Bishop 对这个领域都是做出了很大的贡献吧。在概率图模型中最重要的就是<strong>独立性假设</strong>，这个东西应该硕士贯穿始终的东西吧，之所以概率图模型能抽象简化问题，就是因为这个独立性假设，这些是人类知识，或者说是对事物观察的体现吧。下面，先简要介绍一下有向图网络，在介绍无向图网络，这个其中就有条件随机场。</p>
 <h2 id="贝叶斯网络"><a href="#贝叶斯网络" class="headerlink" title="贝叶斯网络"></a>贝叶斯网络</h2><p>这里我们知识粗略的介绍一下关于贝叶斯网络的东西，给大家一个 intuitive inspection  就可以了，具体的还是要看国语概率图模型的教材。一个直观的感觉还是比较好说的，毕竟这个东西本来就是来对现实世界中发生的事件进行建模的，所以我们很容易直观的理解为什么这样建模。下面还是以一些教材上的例子来给我们以一个直观的感觉吧。</p>
 <p><em>例子：一个学生的高考成绩，和课程老师的推荐信。而，课程老师的推荐信主要是以来该学生的课程成绩，上过那么多课的我们也应该知道，课程成绩，主要依赖课程的难易程度和学生的智力，而高考成绩我们一般只依赖智力。</em></p>
-<p>这个例子我们可以看出，处处充满了假设和简化，很显然的就像课程成绩肯定还依赖我们的努力程度等等。但是我们是抽象模型，简化模型的，所以我们忽略这些次要因素（也不能说是次要因素，使我们不关心的因素），而里面的因果关系充满了我们对事物的认知。根据上面的假设，我们就可以建立一个贝叶斯网络了。<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/dbn.jpg" alt="dbn">  </p>
+<p>这个例子我们可以看出，处处充满了假设和简化，很显然的就像课程成绩肯定还依赖我们的努力程度等等。但是我们是抽象模型，简化模型的，所以我们忽略这些次要因素（也不能说是次要因素，使我们不关心的因素），而里面的因果关系充满了我们对事物的认知。根据上面的假设，我们就可以建立一个贝叶斯网络了。<br><img src="http://ssfgr.top/images/dbn.jpg" alt="dbn">  </p>
 <blockquote>
 <p>Bayes network for students finding jobs </p>
 </blockquote>
@@ -493,12 +282,12 @@
 <p>$p(i \mid g) $</p>
 </blockquote>
 <p>根据独立性分解，我们可以得到因子图：</p>
-<p><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/imap.jpg" alt="imap"></p>
+<p><img src="http://ssfgr.top/images/imap.jpg" alt="imap"></p>
 <blockquote>
 <p>I-map</p>
 </blockquote>
 <p>这样一分解，一切问题就变得简单了，本来47个变量现在一下变得很少了，而联合概率我们就可以写成：<br>\begin{equation}\label{1}<br>  p(i,d,g,s,l)=p(i)p(d)p(g \mid i,d)p(s \mid i)p(l \mid g)<br>\end{equation}</p>
-<h2 id="马尔科夫网"><a href="#马尔科夫网" class="headerlink" title="马尔科夫网"></a>马尔科夫网</h2><p>之前说的是一些有向图，现在我们来讨论无向图。 PGM 这本书里说的主要是有些模型，我们无法使用有向图来，或者说我们无法确切的知道两个事件的因果关系。还有一个问题就是独立性条件有向图很难满足的。例如我们看图<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/mk.jpg" alt="mk"></p>
+<h2 id="马尔科夫网"><a href="#马尔科夫网" class="headerlink" title="马尔科夫网"></a>马尔科夫网</h2><p>之前说的是一些有向图，现在我们来讨论无向图。 PGM 这本书里说的主要是有些模型，我们无法使用有向图来，或者说我们无法确切的知道两个事件的因果关系。还有一个问题就是独立性条件有向图很难满足的。例如我们看图<br><img src="http://ssfgr.top/images/mk.jpg" alt="mk"></p>
 <blockquote>
 <p>Markov network</p>
 </blockquote>
@@ -510,7 +299,7 @@
 <h3 id="HMM"><a href="#HMM" class="headerlink" title="HMM"></a>HMM</h3><p>一个隐马尔科夫模型是一个五元组 ${X,Y,\pi ,A,B}$ , $Y$ 表示的是隐含变量， $X$ 表示的是观测， $\pi$ 表示的是初始概率， $A$ 表示的是状态之间的转移矩阵， $B$  表示的是状态和观测之间的关系，根据这个我们就可以定义一个隐马尔可夫模型了。隐马尔可夫模型其实是动态贝叶斯网络（ dynamic bayes network ）的的一个最简单的特例。</p>
 <p>在序列标注领域，隐马尔科夫模型可以说是一个非常非常重要的角色。我们还是惯常使用一个经典的例子来解释这个问题（一个到处都能找到的例子）。</p>
 <p><em>例子，一个人想知道另一个城市的天气，但是他不能直接观测到，他知道他朋友的每天的活动，怎么获取当地的天气？</em></p>
-<p>下面我们假设，他知道几天前的某一天的天气的概率，而天气这里分为 <em>Y={sunny,cloudy rainy}</em>，朋友的活动有 <em>X={tennis,hiking,home}</em>，天气之间的变换是有一定的规律的，朋友的活动和天气也有很大的关系。</p>
+<p>下面我们假设，他知道几天前的某一天的天气的概率，而天气这里分为 *Y={sunny,cloudy rainy}*，朋友的活动有 *X={tennis,hiking,home}*，天气之间的变换是有一定的规律的，朋友的活动和天气也有很大的关系。</p>
 <p>\begin{array}{|c|c|c|c|}<br>\hline<br>  &amp; sunny &amp;cloudy &amp;rainy \\ \hline<br>\pi  &amp; 0.5   &amp;0.3    &amp;0.2   \\<br>\hline<br>\end{array}</p>
 <blockquote>
 <p>$\pi $</p>
@@ -524,22 +313,22 @@
 <p>$B$</p>
 </blockquote>
 <p>这里需要注意的是每一行的概率，也就是条件概率的和为一。</p>
-<p>根据这个我们可以得到一个状态转移图，也就是自动机。<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/automa.jpg" alt="automa"></p>
+<p>根据这个我们可以得到一个状态转移图，也就是自动机。<br><img src="http://ssfgr.top/images/automa.jpg" alt="automa"></p>
 <blockquote>
 <p>automatic for HMM</p>
 </blockquote>
-<p>但是我们关心的是时序上的关系，也就是说未来的通过一系列的过去的观测来推算过去的天气，这样把这个自动机变成一个时序上模型<img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/hmm.jpg" alt="HMM"></p>
+<p>但是我们关心的是时序上的关系，也就是说未来的通过一系列的过去的观测来推算过去的天气，这样把这个自动机变成一个时序上模型<img src="http://ssfgr.top/images/hmm.jpg" alt="HMM"></p>
 <blockquote>
 <p>HMM<br>根据这个时序模型，加上之前的一些知识，我们可以知道：<br>\begin{equation}\label{hme}<br>  p(x,y\mid \theta)= p(y_1) \prod_{i} p(y_i \mid y_{i-1})p(x_i \mid y_i)<br>\end{equation}</p>
 </blockquote>
 <p>这里的 $x_i,y_i$ 都是一个变量，也就是之前的 X,Y 在时序上的体现，他们的取值就是之前所表示的，之间的状态转移概率，和状态与观测之间的条件概率都是之前我们定义的。这个是什么意思呢。我们可以认为我们观测到了朋友这四天的活动情况， ${x_1,x_2,x_3,x_4}$ ，来计算这四天的天气状况$ {y_1,y_2,y_3,y_4} $。 当然，我们也可以换另外一个问题，已知这个模型，这四天朋友 ${x_1,x_2,x_3,x_4}$ 的概率是多少？ 这是两个完全不同的问题，一个是求在这个模型下，产生这个观测的最可能的状态是什么。一个是求这个模型对这个观测的适应程度。解决不同的问题，我们会有不同的算法。到这里我相信各位已经有了一个比较直观的了解了。下面我们看看对于不同的问题，我们应该使用什么算法。</p>
 <h4 id="前向算法"><a href="#前向算法" class="headerlink" title="前向算法"></a>前向算法</h4><p>前向算法就是评估一个模型对已有观测的适应性的。什么意思呢？就是说，我给定一个模型的算有参数，现在来了观测，问这个模型产生这个观测的概率是多少呢？这个应该就是模型的适应性吧。用公式表示就是：<br>\begin{equation}\label{qian}<br>  p(x \mid \theta)=\sum_y p(x,y \mid \theta)<br>\end{equation}</p>
 <p>当然我们可以枚举算有的状态序列，这个规模是以状态个数为底，以时序长度没指数的大小，现在这个随着时序的增加会非常大，这个不是我们想要的结果，我们希望希望能快速的计算出这个结果，这就是前向算法了。前向算法有效地利用之前状态的的信息，可以看做是一种类似于动态规划的过程。下面我们展开这个 HMM 来看，在给定一个观测时，状态之间的关系如下图所示：</p>
-<p><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/meiju.jpg" alt="meiju"></p>
+<p><img src="http://ssfgr.top/images/meiju.jpg" alt="meiju"></p>
 <blockquote>
 <p>All pathes at this observation</p>
 </blockquote>
-<p>这里面的每一条路径都可以产生我们的观测，我们这个问题就是求所有的路径的和，也就是所有的状态序列产生这个观测的和。最暴力的办法当然就是枚举每一个路径，然后求和就可以了。但是我们观察，这里是有子结构的：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/qianxiang.jpg" alt="qianxiang"></p>
+<p>这里面的每一条路径都可以产生我们的观测，我们这个问题就是求所有的路径的和，也就是所有的状态序列产生这个观测的和。最暴力的办法当然就是枚举每一个路径，然后求和就可以了。但是我们观察，这里是有子结构的：<br><img src="http://ssfgr.top/images/qianxiang.jpg" alt="qianxiang"></p>
 <blockquote>
 <p>sub-structure in the pathes</p>
 </blockquote>
@@ -553,7 +342,7 @@
 <p>这样我们看到之前的时间复杂度 $\mathcal{O}(N^T)$ 一下子就变成了 $\mathcal{O}(N^2 T)$ 。</p>
 <h4 id="维特比算法（Viterbi-algorithm）"><a href="#维特比算法（Viterbi-algorithm）" class="headerlink" title="维特比算法（Viterbi algorithm）"></a>维特比算法（Viterbi algorithm）</h4><p>上面讲到了前向算法，但是平时我们使用最多的并不是衡量一个隐马尔可夫模型的适应性，而是在一个给定的马尔可夫模型中，找到一组观测对应的最可能的状态。这个可以看做是解码的过程。怎么快捷有效的解码这个才是我们最关心的。当然我们也可以像之前，我们所说的那样穷举状态空间来进行求解，显然我们并不像这么做。那怎么办呢？</p>
 <p>之前我们发现了路径中的子结构，那这个问题是否也使用这个子结构呢？如果使用该怎么求解呢？</p>
-<p>我们来看一下实例图：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/viterbi.jpg" alt="viterbi"></p>
+<p>我们来看一下实例图：<br><img src="http://ssfgr.top/images/viterbi.jpg" alt="viterbi"></p>
 <blockquote>
 <p>The optimal path</p>
 </blockquote>
@@ -577,7 +366,7 @@
 <p>之前我们已经通过前向算法，后向算法，获得了相应的 $\alpha,\beta $，我们先来定义一个概率来表示某一时刻是由某个特定的状态产生其对应观测：<br>\begin{equation}\label{gamma}<br>  \gamma_t(i)=p(y_t=i \mid x,\theta)=\frac{p(y_t=i,x \mid \theta)}{p(x \mid \theta)}<br>\end{equation}</p>
 <p>然后联想到之前的定义，我们可以很容易的得到：</p>
 <p>\begin{equation}\label{gamma1}<br>  \gamma_t(i)=\frac{\alpha_t(i) \beta_t(i)}{\sum_i \alpha_t(i) \beta_t(i)}<br>\end{equation}</p>
-<p>现在我们知道某一个时刻的状态的概率了，那我们肯定还要知道两个时刻之间状态转移的概率，这个概率有那么点抽象，我们来看看一个形象的解释吧。<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/qianhou.jpg" alt="qianhou"></p>
+<p>现在我们知道某一个时刻的状态的概率了，那我们肯定还要知道两个时刻之间状态转移的概率，这个概率有那么点抽象，我们来看看一个形象的解释吧。<br><img src="http://ssfgr.top/images/qianhou.jpg" alt="qianhou"></p>
 <blockquote>
 <p>Forward-Backward algorithm</p>
 </blockquote>
@@ -591,7 +380,7 @@
 <p>\begin{equation}\label{b}<br>  B(i,v_k)\frac{\sum_{t \ S.t. x=v_k } \gamma_t(i)}{\sum_t \gamma_t(i)}<br>\end{equation}</p>
 <p>然后我们就可以迭代求解了，因为之前我们求解 $\alpha,\beta$ 都用到了 $\pi,A,B$ 。这样就可以求得局部最优解了。</p>
 <p>到这里 HMM 就告一段落了，对于 HMM 一些应用，我们基本上都知道例如。</p>
-<h3 id="最大熵原理马尔科夫模型"><a href="#最大熵原理马尔科夫模型" class="headerlink" title="最大熵原理马尔科夫模型"></a>最大熵原理马尔科夫模型</h3><p>这里的模型主要是：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/memm.jpg" alt="memm"></p>
+<h3 id="最大熵原理马尔科夫模型"><a href="#最大熵原理马尔科夫模型" class="headerlink" title="最大熵原理马尔科夫模型"></a>最大熵原理马尔科夫模型</h3><p>这里的模型主要是：<br><img src="http://ssfgr.top/images/memm.jpg" alt="memm"></p>
 <blockquote>
 <p>Max entropy hidden markov network</p>
 </blockquote>
@@ -608,7 +397,7 @@
 </blockquote>
 <p>  $P(Y_i \mid X,Y_1,Y_2,…,Y_{i-1},Y_{i+1},…,Y_n)=p(Y_i \mid X,Y_{i-1},Y_{i+1})$</p>
 <p>则称 $P(Y \mid X)$ 是线性链式条件随机场。</p>
-<p>下面我们来看一下这个用图怎么表示：<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/crf.jpg" alt="crf"></p>
+<p>下面我们来看一下这个用图怎么表示：<br><img src="http://ssfgr.top/images/crf.jpg" alt="crf"></p>
 <blockquote>
 <p>Chain conditional random field<br>这个跟之前的隐马尔可夫模型和最大熵马尔可夫模型都有了很到的区别，首先就是这是一个判别式模型，是在最大化特定的观测下的状态序列概率，也就是条件概率，而且状态之间变成了马尔科夫随机场，也不再是之前的动态贝叶斯网络。这些都符合作者对问题的分析，和改正。观测序列的结构这里没有给出，因为这个是和数据有很大关系的，可以说是基于应用的，不同的数据可能会有不同的结构。</p>
 </blockquote>
@@ -632,7 +421,7 @@
 <blockquote>
 <p>-</p>
 </blockquote>
-<p>下面还有一种我们比较喜欢，另一种形式的简化，之前的都是对节点进行求和，然和写成列向量的形式，现在我们对特征函数求和，这样每个求和之后的结果都是一个 $\mid y \mid * \mid y \mid$  的矩阵，这样使用起来是非常简单的。之前我们对 $y$ 求和，但是显示中，我们关注的是时序数据，也就是安，我们之前 HMM 中提出那样，每一个时序片之间，我们也可以枚举 $y$  的状态，形成一个链路图。<br><img src="https://github.com/li-haoran/li-haoran.github.io/raw/master/images/lcrft.jpg" alt="lceft"></p>
+<p>下面还有一种我们比较喜欢，另一种形式的简化，之前的都是对节点进行求和，然和写成列向量的形式，现在我们对特征函数求和，这样每个求和之后的结果都是一个 $\mid y \mid * \mid y \mid$  的矩阵，这样使用起来是非常简单的。之前我们对 $y$ 求和，但是显示中，我们关注的是时序数据，也就是安，我们之前 HMM 中提出那样，每一个时序片之间，我们也可以枚举 $y$  的状态，形成一个链路图。<br><img src="http://ssfgr.top/images/lcrft.jpg" alt="lceft"></p>
 <blockquote>
 <p>Time spread form</p>
 </blockquote>
@@ -681,415 +470,72 @@
 <p>\begin{equation}\label{v200}<br>  p_i(j)=\arg \max_{1 \leq l \leq \mid y \mid }[v_{i-1}(l) + w \cdot F_1(y_{i-1}=l,y_i=j,x)]<br>\end{equation}</p>
 <p>这样我们就可以求出最终的结果了：<br>\begin{equation}\label{vf}<br>  \max_y \sum_i w \cdot F_i(y_{i-1},y_i,x)=\max_{1 \leq l \leq \mid y \mid } v_n(l)<br>\end{equation}</p>
 <p>相应的状态序列，就可以直接回溯 $p_n$ 就可以了。</p>
-<p>整个条件随机场就告一段落了。有一个网站是这方面很全的，<a href="http://www.inference.phy.cam.ac.uk/hmw26/crf/" target="_blank" rel="noopener">crf</a>这上面有很多资料，可以关注。还有就是李航老师的《统计学习方法》，还有<a href="http://www.52nlp.cn/hmm-learn-best-practices-one-introduction" target="_blank" rel="noopener">hmm]</a>，还有就是 Lafferty  的原始论文。图像这边最早的是 Xuming He 的”Multiscale Conditional Random Fields for Image Labeling”，还有 Plath的”Multi-class image segmentation using Conditional Random Fields and Global Classfication” 。这个之后要好好看看，看看这个东西是怎么应用的。</p>
+<p>整个条件随机场就告一段落了。有一个网站是这方面很全的，<a target="_blank" rel="noopener" href="http://www.inference.phy.cam.ac.uk/hmw26/crf/">crf</a>这上面有很多资料，可以关注。还有就是李航老师的《统计学习方法》，还有[hmm]](<a target="_blank" rel="noopener" href="http://www.52nlp.cn/hmm-learn-best-practices-one-introduction)%EF%BC%8C%E8%BF%98%E6%9C%89%E5%B0%B1%E6%98%AF">http://www.52nlp.cn/hmm-learn-best-practices-one-introduction)，还有就是</a> Lafferty  的原始论文。图像这边最早的是 Xuming He 的”Multiscale Conditional Random Fields for Image Labeling”，还有 Plath的”Multi-class image segmentation using Conditional Random Fields and Global Classfication” 。这个之后要好好看看，看看这个东西是怎么应用的。</p>
 
-      
     </div>
 
     
-
     
-    
-    
-
-    
-
-    
-      
-    
-    
-
     
 
     <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/隐马尔科夫/" rel="tag"># 隐马尔科夫</a>
-          
-            <a href="/tags/条件随机场/" rel="tag"># 条件随机场</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/06/23/CNN/" rel="next" title="CNN">
-                <i class="fa fa-chevron-left"></i> CNN
-              </a>
-            
+          <div class="post-tags">
+              <a href="/tags/%E9%9A%90%E9%A9%AC%E5%B0%94%E7%A7%91%E5%A4%AB/" rel="tag"># 隐马尔科夫</a>
+              <a href="/tags/%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA/" rel="tag"># 条件随机场</a>
           </div>
 
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/06/27/rbm/" rel="prev" title="rbm">
-                rbm <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-  </div>
-
-
-          </div>
-          
-
-  
-
-
-
-        </div>
         
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
 
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-            
-              <p class="site-author-name" itemprop="name">Haoran LI</p>
-              <div class="site-description motion-element" itemprop="description"></div>
-          </div>
-
-          
-            <nav class="site-state motion-element">
-              
-                <div class="site-state-item site-state-posts">
-                
-                  <a href="https://li-haoran.github.io/archives/">
-                
-                    <span class="site-state-item-count">8</span>
-                    <span class="site-state-item-name">日志</span>
-                  </a>
-                </div>
-              
-
-              
-                
-                
-                <div class="site-state-item site-state-categories">
-                  
-                    
-                      <a href="https://li-haoran.github.io/categories/">
-                    
-                  
-                    
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">2</span>
-                    <span class="site-state-item-name">分类</span>
-                  </a>
-                </div>
-              
-
-              
-                
-                
-                <div class="site-state-item site-state-tags">
-                  
-                    
-                      <a href="https://li-haoran.github.io/tags/">
-                    
-                  
-                    
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">16</span>
-                    <span class="site-state-item-name">标签</span>
-                  </a>
-                </div>
-              
-            </nav>
-          
-
-          
-
-          
-
-          
-            <div class="links-of-author motion-element">
-              
-                <span class="links-of-author-item">
-                  
-                  
-                    
-                  
-                  
-                    
-                  
-                  <a href="https://github.com/li-haoran" title="GitHub &rarr; https://github.com/li-haoran" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-                </span>
-              
-                <span class="links-of-author-item">
-                  
-                  
-                    
-                  
-                  
-                    
-                  
-                  <a href="mailto:haoran_li@hit.edu.cn" title="E-Mail &rarr; mailto:haoran_li@hit.edu.cn" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-                </span>
-              
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/06/23/CNN/" rel="prev" title="CNN">
+                  <i class="fa fa-chevron-left"></i> CNN
+                </a>
             </div>
-          
-
-          
-
-          
-          
-
-          
-            
-          
-          
-
-        </div>
-      </div>
-
-      
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#PGM"><span class="nav-number">1.</span> <span class="nav-text">PGM</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯网络"><span class="nav-number">1.1.</span> <span class="nav-text">贝叶斯网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#马尔科夫网"><span class="nav-number">1.2.</span> <span class="nav-text">马尔科夫网</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequential-data"><span class="nav-number">1.3.</span> <span class="nav-text">Sequential data</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HMM"><span class="nav-number">1.3.1.</span> <span class="nav-text">HMM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#前向算法"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">前向算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#维特比算法（Viterbi-algorithm）"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">维特比算法（Viterbi algorithm）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#前向后向算法"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">前向后向算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最大熵原理马尔科夫模型"><span class="nav-number">1.3.2.</span> <span class="nav-text">最大熵原理马尔科夫模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件随机场"><span class="nav-number">1.3.3.</span> <span class="nav-text">条件随机场</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#条件随机场的参数化"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">条件随机场的参数化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#概率的计算"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">概率的计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#学习算法"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">学习算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#条件随机场的预测"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">条件随机场的预测</span></a></li></ol></li></ol></li></ol></li></ol></div>
-            
-
+            <div class="post-nav-item">
+                <a href="/2016/06/27/rbm/" rel="next" title="rbm">
+                  rbm <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-        </div>
-      <!--/noindex-->
-      
-
-      
-
-    </div>
-  </aside>
-  
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
-  <span class="with-love" id="animate">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Haoran LI</span>
-
-  
-
-  
+    </footer>
+  </article>
 </div>
 
 
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
-
-
-
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
 
 
 
 
-        
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
 
 
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
-
-    
-
-    
-
-    
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Haoran LI</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
-  
-
-<script>
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    </div>
+  </footer>
 
   
-  <script src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   
 
 
-  <script src="/js/utils.js?v=7.1.0"></script>
 
-  <script src="/js/motion.js?v=7.1.0"></script>
-
-
-
-  
-  
-
-
-  <script src="/js/schemes/muse.js?v=7.1.0"></script>
-
-
-
-  
-  <script src="/js/scrollspy.js?v=7.1.0"></script>
-<script src="/js/post-details.js?v=7.1.0"></script>
-
-
-
-  
-
-
-  <script src="/js/next-boot.js?v=7.1.0"></script>
-
-
-  
-
-  
-
-  
-
-  
-
-
-  
 
 
   
@@ -1099,88 +545,10 @@
 
   
 
-  
-
-  
-  
-
-  
-  
-
-  
-    
-      <script type="text/x-mathjax-config">
-  
-
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
-      processEscapes: true,
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    },
-    TeX: {
-      
-      equationNumbers: {
-        autoNumber: 'AMS'
-      }
-    }
-  });
-  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
-    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
-      if (data.display) {
-        var next = data.script.nextSibling;
-        while (next && next.nodeName.toLowerCase() === '#text') { next = next.nextSibling }
-        if (next && next.nodeName.toLowerCase() === 'br') { next.parentNode.removeChild(next) }
-      }
-    });
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for (i = 0; i < all.length; i += 1) {
-      document.getElementById(all[i].inputID + '-Frame').parentNode.className += ' has-jax';
-    }
-  });
-</script>
-<script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-    
-  
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
 
 
-  
-
-  
-
-  
-  <script>
-    (function(){
-      var bp = document.createElement('script');
-      var curProtocol = window.location.protocol.split(':')[0];
-      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(bp, s);
-    })();
-  </script>
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
 </body>
 </html>
